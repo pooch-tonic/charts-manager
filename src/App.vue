@@ -1,8 +1,23 @@
 <template>
     <div id="app">
         <header id="app-header">
-            <img src="./assets/logo.png">
-            <h1>Charts Manager</h1>
+            <div id="app-logo-wrapper">
+                <img id="app-logo" src="./assets/logo.png">
+            </div>
+            <h1 id="app-title">{{ appTitle }}</h1>
+            <div id="app-navbar">
+                <ul>
+                    <li>
+                        <router-link :to="'/'">Home</router-link>
+                    </li>
+                    <li>
+                        <router-link :to="'/charts'">Charts</router-link>
+                    </li>
+                    <li>
+                        <router-link :to="'/charts/bar-simple'">Bar-simple</router-link>
+                    </li>
+                </ul>
+            </div>
         </header>
         <div id="app-contents">
             <main id="app-main">
@@ -15,50 +30,109 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
-    name: 'App'
+    name: 'App',
+    computed: {
+        ...mapState([
+            'appTitle'
+        ]),
+    }     
 }
 </script>
 
 <style>
-body {
+body, html {
+    height: 100%;
     margin: 0 0;
 }
 
 #app {
+    align-items: stretch;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
+    display: flex;
+    flex-direction: column;
     height: 100%;
     position: relative;
     width: 100%;
 }
 
 #app-header {
+    background: #ffffff;
     box-shadow: 0 5px 8px 2px #eaeaea;
-    display: block;
+    display: flex;
     height: 90px;
     position: fixed;
-    top: 0;
+    text-align: left;
     width: 100%;
+    z-index: 50;
 }
 
-#app-header img {
-    height: 80px;
-    position: fixed;
-    top: 10px;
-    left: 10px;
+#app-logo-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 10px;
+}
+
+#app-logo {
+    height: 40px;
+}
+
+#app-title {
+    font-weight: 200;
+    line-height: 90px;
+    margin: 0 0;
+    padding: 0 5px;
+}
+
+#app-navbar {
+    position: absolute;
+    height: 100%;
+    padding-right: 15px;
+    right: 0;
+}
+
+#app-navbar ul {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    list-style-type: none;
+    margin: 0 0;
+    padding: 0 0;
+    
+}
+
+#app-navbar ul li  {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    margin: 0 0;
+    padding: 0 0;
+}
+
+#app-navbar ul li a {
+    display: block;
+    padding: 0px 8px;
+    text-decoration: none;
 }
 
 #app-contents {
-    position: fixed;
-    top: 80px;
+    flex: 1;
+    padding-top: 90px;
     width: 100%;
+    z-index: 40;
 }
 
 #app-main {
+    height: 100%;
     width: 100%;
 }
+
 </style>
