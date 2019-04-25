@@ -39,6 +39,13 @@ export default {
             myChart.setOption({
                 title: { text: 'Simple Bar example' },
                 tooltip: {},
+                legend: {
+                    align: vm.getChartParameters().legendAlign,
+                },
+                /*angleAxis: {
+                    type: 'value',
+                    startAngle: 0
+                },*/
                 xAxis: {
                     data: ["Abel","Bart","Chris","Diana","Edward","Flora"],
                     max: vm.adjustChartParameters(vm.getChartParameters()).xmax,
