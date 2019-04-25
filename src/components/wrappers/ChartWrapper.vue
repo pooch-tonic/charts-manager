@@ -1,26 +1,17 @@
 <template>
     <div id="chart-wrapper">
-        <BarSimple 
-        v-bind:xmax="chartParameters.xmax"
-        v-bind:ymax="chartParameters.ymax"
-        />
+        <BarSimple />
     </div>
 </template>
 
 <script>
 import BarSimple from '@/components/charts/BarSimple'
-import { mapState } from 'vuex'
 
 export default {
     name: 'ChartWrapper',
     components: {
         BarSimple,
     },
-    computed: {
-        ...mapState([
-            'chartParameters'
-        ]),
-    }
 }
 </script>
 

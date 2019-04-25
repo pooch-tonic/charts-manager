@@ -5,40 +5,46 @@
 
 <script>
 import echarts from 'echarts'
-import { mapState} from 'vuex'
+import store from '@/store'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
     name: 'BarSimple',
-    props: {
-        xmax: {
-            default: null,
-            type: Number
-        },
-        ymax: {
-            default: null,
-            type: Number
-        },
-    },
     computed: {
-        ...mapState([
-            'chartParameters'
-        ]),
+        getChartParametersUpdates() {
+            return store.getters.getChartParameters
+        }
     },
     mounted() {
         this.drawLine();
     },
     methods: {
+        ...mapGetters([
+            'getChartParameters'
+        ]),
+        adjustChartParameters(chartParameters) {
+            if (!chartParameters.xmax) {
+                chartParameters.xmax = null;
+            }
+            if (!chartParameters.ymax) {
+                chartParameters.ymax = null;
+            }
+            return chartParameters;
+        },
         drawLine(){
             let myChart = echarts.init(document.getElementById('current-chart'))
+            let vm = this;
+            //DEBUG console.log("store state: " + vm.$store.state.chartParameters.xmax, vm.$store.state.chartParameters.ymax);
+            //DEBUG console.log("component: " + vm.getxmax(), vm.getymax());
             myChart.setOption({
                 title: { text: 'Simple Bar example' },
                 tooltip: {},
                 xAxis: {
                     data: ["Abel","Bart","Chris","Diana","Edward","Flora"],
-                    max: this.$store.state.chartParameters.xmax,
+                    max: vm.adjustChartParameters(vm.getChartParameters()).xmax,
                 },
                 yAxis: {
-                    max: this.$store.state.chartParameters.ymax,
+                    max: vm.adjustChartParameters(vm.getChartParameters()).ymax,
                 },
                 series: [{
                     name: 'Installed apps',
@@ -46,6 +52,14 @@ export default {
                     data: [5, 20, 36, 10, 10, 20]
                 }]
             });
+        }
+    },
+    watch: {
+        getChartParametersUpdates: {
+            handler: function(getChartParametersUpdates, oldGetChartParametersUpdates) {
+                this.drawLine();
+            },
+            deep: true,
         }
     }
 }

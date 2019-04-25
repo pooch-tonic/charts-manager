@@ -12,7 +12,6 @@
 <script>
 import ChartWrapper from '@/components/wrappers/ChartWrapper'
 import ChartToolbar from '@/components/ChartToolbar'
-import { mapState } from 'vuex'
 
 export default {
     name: 'ChartConfig',
@@ -20,16 +19,6 @@ export default {
         ChartWrapper,
         ChartToolbar,
     },
-    computed: {
-        ...mapState([
-            'chartParameters'
-        ]),
-    },
-    data () {
-        return {
-            msg: 'ChartConfig'
-        }
-    }
 }
 </script>
 

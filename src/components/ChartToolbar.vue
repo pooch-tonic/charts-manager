@@ -11,6 +11,7 @@
 
 <script>
 import { BInput, BInputGroup } from 'bootstrap-vue'
+import { mapMutations } from 'vuex';
 
 export default {
     name: 'ChartToolbar',
@@ -27,19 +28,18 @@ export default {
         }
     },
     methods: {
-        updateChartParameters: function() {
-            this.$store.commit('UPDATE_CHART_PARAMETERS', this.chartParameters);
-            console.log(this.chartParameters);
-            console.log(this.$store);
-        }
+        ...mapMutations({
+            updateChartParameters: 'UPDATE_CHART_PARAMETERS', 
+        })
     },
     watch: {
-        'chartParameters.xmax': function() {
-            this.updateChartParameters();
+        'chartParameters': {
+            handler: function(chartParameters, oldChartParameters) {
+                let vm = this;
+                vm.updateChartParameters(vm.chartParameters);
+            },
+            deep: true,
         },
-        'chartParameters.ymax': function() {
-            this.updateChartParameters();
-        }
     }
 }
 </script>

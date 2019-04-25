@@ -12,9 +12,13 @@ export default new Vuex.Store({
             ymax: null,
         }
     },
+    getters: {
+        getChartParameters: state => state.chartParameters,
+    },
     mutations: {
         UPDATE_CHART_PARAMETERS: (state, chartParameters) => {
-            state.chartParameters = chartParameters
+            Vue.set(state, 'chartParameters', chartParameters)
+            // DEBUG console.log(state.chartParameters);
         }
     },
     actions: {
