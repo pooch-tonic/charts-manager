@@ -1,16 +1,20 @@
 <template>
     <div id="chart-wrapper">
-        <BarSimple />
+        <ErrorBoundary>
+            <BarSimple />
+        </ErrorBoundary>
     </div>
 </template>
 
 <script>
 import BarSimple from '@/components/charts/BarSimple'
+import { ErrorBoundary } from 'vue-error-boundary'
 
 export default {
     name: 'ChartWrapper',
     components: {
         BarSimple,
+        ErrorBoundary,
     },
 }
 </script>

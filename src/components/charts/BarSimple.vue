@@ -42,10 +42,10 @@ export default {
                 legend: {
                     align: vm.getChartParameters().legendAlign,
                 },
-                /*angleAxis: {
+                angleAxis: {
                     type: 'value',
                     startAngle: 0
-                },*/
+                },
                 xAxis: {
                     data: ["Abel","Bart","Chris","Diana","Edward","Flora"],
                     max: vm.adjustChartParameters(vm.getChartParameters()).xmax,
