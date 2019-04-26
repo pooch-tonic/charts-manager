@@ -13,9 +13,6 @@
                     <li>
                         <router-link :to="'/charts'">Charts</router-link>
                     </li>
-                    <li>
-                        <router-link :to="'/charts/bar-simple'">Bar-simple</router-link>
-                    </li>
                 </ul>
             </div>
         </header>

@@ -1,5 +1,13 @@
 <template>
     <div id="chart-toolbar" role="tablist">
+        <BInputGroup prepend="type">
+            <BFormSelect label="chart-type" v-model="chartType">
+                <option v-for="chartType in getChartOptions().chartTypes" v-bind:key="chartType.name" :value="chartType">
+                    {{ chartType.name }}
+                </option>
+            </BFormSelect>
+        </BInputGroup>
+        <hr></hr>
         <BCard no-body>
             <BCardHeader header-tag="header" role="tab">
                 <BButton block v-b-toggle.menu-axis variant="info">
@@ -8,12 +16,16 @@
             </BCardHeader>
             <BCollapse id="menu-axis" accordion="chartsToolbarMenu">
                 <BCardBody>
-                    <BInputGroup  prepend="xmax">
-                        <BInput label="xmax" type="number" placeholder="default: null" v-model.number="xmax"/>
-                    </BInputGroup>
-                    <BInputGroup  prepend="ymax">
-                        <BInput label="ymax" type="number" placeholder="default: null" v-model.number="ymax"/>
-                    </BInputGroup>
+                    <div v-if="this.isParameterAllowed('xAxis')">
+                        <BInputGroup prepend="xmax">
+                            <BInput label="xmax" type="number" placeholder="default: null" v-model.number="xmax"/>
+                        </BInputGroup>
+                    </div>
+                    <div v-if="this.isParameterAllowed('yAxis')">
+                        <BInputGroup prepend="ymax">
+                            <BInput label="ymax" type="number" placeholder="default: null" v-model.number="ymax"/>
+                        </BInputGroup>
+                    </div>
                 </BCardBody>
             </BCollapse>    
         </BCard>
@@ -36,7 +48,7 @@
 
 <script>
 import { BInput, BInputGroup, BCard, BCardHeader, BCardBody, BCardText, BCollapse, BFormSelect } from 'bootstrap-vue'
-import { mapMutations, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import { mapFields } from 'vuex-map-fields';
 import chartOptions from '@/config/chart-options';
 
@@ -54,28 +66,20 @@ export default {
     },
     computed: {
         ...mapFields([
+            'chartParameters.chartType',
             'chartParameters.legendAlign',
             'chartParameters.xmax',
             'chartParameters.ymax'
-        ])
+        ]),        
+        ...mapGetters([
+            'isParameterAllowed'
+        ]),
     },
     methods: {
-        ...mapMutations({
-            updateChartParameters: 'UPDATE_CHART_PARAMETERS', 
-        }),
         getChartOptions() {
             return chartOptions;
         }
     },
-    watch: {
-        'chartParameters': {
-            handler: function(chartParameters, oldChartParameters) {
-                let vm = this;
-                vm.updateChartParameters(vm.chartParameters);
-            },
-            deep: true,
-        },
-    }
 }
 </script>
 
