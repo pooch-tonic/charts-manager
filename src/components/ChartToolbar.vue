@@ -17,7 +17,9 @@
             <BCollapse :id="'accordion-' + parameter.name" accordion="chartsToolbarMenu">
                 <BCardBody>
                     <BInputGroup v-for="(subParameter, key) in parameter.content" v-bind:key="subParameter.key" :prepend="key">
-                        <BInput :label="key" type="subParameter.type" :placeholder="'default: ' + (subParameter.default === null ? 'null' : subParameter.default)"/>
+                        <BInput v-if="subParameter.type === 'boolean'" :label="key" type="checkbox"/>
+                        <BInput v-if="subParameter.type === 'number'" :label="key" type="number" :placeholder="'default: ' + (subParameter.default === null ? 'null' : subParameter.default)"/>
+                        <BInput v-if="subParameter.type === 'text'" :label="key" type="text" :placeholder="'default: ' + (subParameter.default === '' ? 'vide' : subParameter.default)"/>
                     </BInputGroup>
                 </BCardBody>
             </BCollapse>

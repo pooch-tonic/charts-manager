@@ -1,5 +1,5 @@
 const types = {
-    bool: "boolean",
+    boolean: "boolean",
     number: "number",
     text: "text",
     array: "array",
