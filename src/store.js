@@ -3,29 +3,33 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 import { getField, updateField } from 'vuex-map-fields';
-import chartOptions from '@/config/chart-options';
+import { chartTypes } from '@/config/chart-options';
 
 export default new Vuex.Store({
     state: {
         appTitle: "Charts Manager",
-        chartParameters: {
-            chartType: chartOptions.chartTypes[0],
-            legendAlign: "left",
-            xmax: null,
-            ymax: null,
+        chartConfig: {
+            chartType: chartTypes[1],
+            currentParameters: {},
         },
     },
     getters: {
         getField,
-        getChartParameters: state => state.chartParameters,
+        getCurrentParameters: function(state) {
+            return () => {
+                return state.chartConfig.currentParameters;
+            }
+        },
+        getChartConfig: state => state.chartConfig,
         getChartType: function(state) {
             return () => {
-                return state.chartParameters.chartType;
+                return state.chartConfig.chartType;
             }
         },
         isParameterAllowed: function(state) {
             return (parameterName) => {
-                if (state.chartParameters.chartType.allowedParameters.indexOf(parameterName) > -1) {
+                let allowedParameters = state.chartConfig.chartType.allowedParameters;
+                if (allowedParameters.indexOf(parameterName) > -1) {
                     return true;
                 }
                 return false;

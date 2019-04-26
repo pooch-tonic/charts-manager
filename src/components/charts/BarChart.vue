@@ -12,12 +12,13 @@ import merger from '@/util/chart-options-merger'
 export default {
     name: 'BarChart',
     computed: {
-        getChartParametersUpdates() {
-            return store.getters.getChartParameters
+        getChartConfigUpdates() {
+            return store.getters.getChartConfig
         },
         ...mapGetters([
             'isParameterAllowed',
             'getChartType',
+            'getCurrentParameters'
         ]),
     },
     mounted() {
@@ -25,17 +26,8 @@ export default {
     },
     methods: {
         ...mapGetters([
-            'getChartParameters',
+            'getChartConfig',
         ]),
-        adjustChartParameters(chartParameters) {
-            if (!chartParameters.xmax) {
-                chartParameters.xmax = null;
-            }
-            if (!chartParameters.ymax) {
-                chartParameters.ymax = null;
-            }
-            return chartParameters;
-        },
         dispose() {
             console.log('DISPOSE');
             echarts.dispose(document.getElementById('current-chart'));
@@ -43,11 +35,16 @@ export default {
         drawLine(){
             let myChart = echarts.init(document.getElementById('current-chart'))
             let vm = this;
-            let cp = vm.getChartParameters();
+            let cc = vm.getChartConfig();
             let ct = vm.getChartType();
-            console.log("drawline called");
+            let cp = vm.getCurrentParameters();
+            console.log(cp);
             
-            let optionsArray = [
+            let optionsArray = [];
+
+            /*cp.
+
+
                 {
                     name: "title",
                     content: {
@@ -78,7 +75,6 @@ export default {
                     content: {
                         xAxis: {
                             data: ["Abel","Bart","Chris","Diana","Edward","Flora"],
-                            max: vm.adjustChartParameters(cp).xmax,
                         }
                     }
                 },
@@ -86,7 +82,6 @@ export default {
                     name: "yAxis",
                     content: {
                         yAxis: {
-                            max: vm.adjustChartParameters(cp).ymax,
                         }
                     }
                 },                
@@ -130,12 +125,12 @@ export default {
 
             let options = merger.merge(optionsArray);
 
-            myChart.setOption(options);
+            myChart.setOption(options);*/
         },
     },
     watch: {
-        getChartParametersUpdates: {
-            handler: function(getChartParametersUpdates, oldGetChartParametersUpdates) {
+        getChartConfigUpdates: {
+            handler: function(getChartConfigUpdates, oldGetChartConfigUpdates) {
                 this.dispose();
                 this.drawLine();
             },
