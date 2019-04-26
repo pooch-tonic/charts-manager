@@ -2,6 +2,7 @@ export default {
     chartTypes: [
         {
             name: "line",
+            type: "line",
             isPolar: false,
             allowedParameters: [
                 "title",
@@ -14,6 +15,7 @@ export default {
         },
         {
             name: "bar (cartesian 2D)",
+            type: "bar",
             isPolar: false,
             allowedParameters: [
                 "title",
@@ -26,6 +28,7 @@ export default {
         },
         {
             name: "bar (polar)",
+            type: "bar",
             isPolar: true,
             allowedParameters: [
                 "title",
@@ -38,7 +41,8 @@ export default {
         },
         {
             name: "pie",
-            isPolar: true,
+            type: "pie",
+            isPolar: false,
             allowedParameters: [
                 "title",
                 "legend",

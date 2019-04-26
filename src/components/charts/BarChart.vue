@@ -120,7 +120,7 @@ export default {
                         series: [
                             {
                                 name: 'Installed apps',
-                                type: 'bar',
+                                type: ct.type,
                                 data: [5, 20, 36, 10, 10, 20],
                             }
                         ]
