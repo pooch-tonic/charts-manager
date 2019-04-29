@@ -1,10 +1,10 @@
 /* eslint-disable indent */
-import store from '@/store';
+import store from '@/store'
 import Mapper from './chart-data-mapper'
 
 export default {
 
-    merge: function(options) {
+    merge: function(options, dataSortType) {
         let chartType = store.getters.getChartType();
         let filteredOptions = {};
         options.forEach(option => {
@@ -22,7 +22,7 @@ export default {
             filteredOptions[option.name] = propsToInsert;
         });
 
-        filteredOptions = Mapper.mapData(filteredOptions, chartType.type, chartType.isPolar);
+        filteredOptions = Mapper.mapData(filteredOptions, chartType.type, chartType.isPolar, dataSortType);
         
         return filteredOptions;
     },

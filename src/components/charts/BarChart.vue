@@ -15,8 +15,12 @@ export default {
         getChartTypeUpdates() {
             return store.getters.getChartConfig().chartType
         },
+        getDataSortUpdates() {
+            return store.getters.getDataSort()
+        },
         ...mapGetters([
             'getChartConfig',
+            'getDataSort'
         ]),
     },
     mounted() {
@@ -28,17 +32,18 @@ export default {
             this.drawLine();
         },
         dispose() {
-            console.log('DISPOSE');
+            // DEBUG console.log('DISPOSE');
             echarts.dispose(document.getElementById('current-chart'));
         },
         drawLine(){
-            let myChart = echarts.init(document.getElementById('current-chart'))
+            let myChart = echarts.init(document.getElementById('current-chart'));
             let vm = this;
             let cc = vm.getChartConfig();
+            let ds = vm.getDataSort();
             let ct = cc.chartType;
-            let options = merger.merge(ct.allowedParameters);
-            console.log("STORE: ", cc.chartType);
-            console.log("MERGED: ",options);
+            let options = merger.merge(ct.allowedParameters, ds);
+            // DEBUG console.log("STORE: ", cc.chartType);
+            // DEBUG console.log("MERGED: ",options);
             myChart.setOption(options);
         },
     },
@@ -48,6 +53,11 @@ export default {
                 this.redraw();
             },
             deep: true,
+        },
+        getDataSortUpdates: {
+            handler: function(getDataSortUpdates, oldGetDataSortUpdates) {
+                this.redraw();
+            }
         }
     }
 }

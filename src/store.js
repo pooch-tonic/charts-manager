@@ -12,7 +12,7 @@ export default new Vuex.Store({
         chartConfig: {
             chartType: _.clone(chartTypes[1]),
         },
-        dataSort: null
+        dataSort: 'none'
     },
     getters: {
         getChartConfig: function(state) {
@@ -36,7 +36,7 @@ export default new Vuex.Store({
             Vue.set(state.chartConfig, 'chartType', newChartType)
         },
         UPDATE_DATA_SORT: function (state, newDataSort) {
-            Vue.set(state.dataSort, 'dataSort', newDataSort)
+            state.dataSort = newDataSort;
         }
     },
     actions: {

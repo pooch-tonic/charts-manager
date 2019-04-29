@@ -78,7 +78,7 @@ import lodash from 'lodash';
 import store from '@/store';
 
 const sortOptions = [
-    {value: null, text: "none"},
+    {value: 'none', text: "none"},
     {value: 'ascendant', text: "ascendant"},
     {value: 'descendant', text: "descendant"}
 ]
@@ -99,7 +99,6 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'isParameterAllowed',
             'getChartConfig',
             'getDataSort'
         ]),

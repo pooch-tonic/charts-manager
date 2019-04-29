@@ -8,16 +8,6 @@ const types = {
     select: 'select'
 }
 
-const defaultAxisData = [
-    "Abel", "Bart", "Chris", "Diana", "Edward", "Flora", "Gregory", "Henry", "Iris", "Jayce", "Krystal", "Leo", "Mark", "Norman", "Oriana", "Peter", "Quinn", "Raphael", "Stacie", "Trevor", "Ursula", "Vladimir", "William", "Xiang", "Yannis", "Zephyr"
-]
-const defaultSeriesData = {
-    name: "Installed Apps",
-    data: [
-        5, 20, 36, 10, 10, 20, 1, 18, 48, 16, 24, 10, 44, 5, 18, 46, 17, 34, 35, 27, 0, 6, 19, 4, 24, 56
-    ]
-}
-
 const chartParameters = {
     title: {
         name: 'title',
@@ -110,6 +100,7 @@ const chartTypes = [
     {
         name: 'bar (cartesian 2D)',
         type: 'bar',
+        //typeSerie: donne la compatibilité
         isPolar: false,
         allowedParameters: [
             chartParameters.title,
