@@ -1,31 +1,10 @@
 /* eslint-disable indent */
-import lodash from 'lodash';
 import store from '@/store';
+import Mapper from './chart-data-mapper'
 
 export default {
 
-    /* OLD FILTER FUNCTION
     merge: function(options) {
-        let chartType = store.getters.getChartType();
-        let filteredOptions = {};
-        options.forEach(option => {
-            if (store.getters.isParameterAllowed(option.name)) {
-                _.merge(filteredOptions, option.content);
-            }
-        });
-
-        if (chartType.isPolar) {
-            let series = filteredOptions.series;
-            series.forEach(item => {
-                _.assign(item, {coordinateSystem: "polar"});
-            })
-        }
-
-        return filteredOptions
-    },
-    */
-
-   merge: function(options) {
         let chartType = store.getters.getChartType();
         let filteredOptions = {};
         options.forEach(option => {
@@ -33,8 +12,8 @@ export default {
             let propsToInsert = {};
 
             if (option.name !== "series") {
-                _.forEach(content, function(parentvalue, key) {
-                    propsToInsert[key] = parentvalue.value;
+                _.forEach(content, function(parentValue, key) {
+                    propsToInsert[key] = parentValue.value;
                 });
             } else {
                 propsToInsert = content.value;
@@ -43,18 +22,8 @@ export default {
             filteredOptions[option.name] = propsToInsert;
         });
 
-        let series = filteredOptions.series;
-        if (chartType.isPolar) {
-            series.forEach(item => {
-                _.assign(item, {coordinateSystem: "polar"});
-                _.assign(item, {type: chartType.type});
-            })
-        } else {
-            series.forEach(item => {
-                _.assign(item, {type: chartType.type});
-            })
-        }
-
+        filteredOptions = Mapper.mapData(filteredOptions, chartType.type, chartType.isPolar);
+        
         return filteredOptions;
     },
 }

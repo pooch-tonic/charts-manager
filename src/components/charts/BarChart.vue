@@ -1,5 +1,5 @@
 <template>
-    <div id="current-chart" @click="this.drawLine">
+    <div id="current-chart" @click="this.redraw">
     </div>
 </template>
 
@@ -12,22 +12,21 @@ import merger from '@/util/chart-options-merger'
 export default {
     name: 'BarChart',
     computed: {
-        getChartConfigUpdates() {
-            return store.getters.getChartConfig
+        getChartTypeUpdates() {
+            return store.getters.getChartConfig().chartType
         },
         ...mapGetters([
-            'isParameterAllowed',
-            'getChartType',
-            'getCurrentParameters'
+            'getChartConfig',
         ]),
     },
     mounted() {
         this.drawLine();
     },
     methods: {
-        ...mapGetters([
-            'getChartConfig',
-        ]),
+        redraw() {
+            this.dispose();
+            this.drawLine();
+        },
         dispose() {
             console.log('DISPOSE');
             echarts.dispose(document.getElementById('current-chart'));
@@ -36,104 +35,20 @@ export default {
             let myChart = echarts.init(document.getElementById('current-chart'))
             let vm = this;
             let cc = vm.getChartConfig();
-            let ct = vm.getChartType();
-            let cp = vm.getCurrentParameters();
-
-            /*cp.
-
-
-                {
-                    name: "title",
-                    content: {
-                        title: {
-                            text: "Sample chart"
-                        }
-                    }
-                },
-                {
-                    name: "legend",
-                    content: {
-                        legend: {
-                            align: "left"
-                        }
-                        
-                    }
-                },
-                {
-                    name: "grid",
-                    content: {
-                        grid: {
-                            top: 100
-                        }
-                    }
-                },
-                {
-                    name: "xAxis",
-                    content: {
-                        xAxis: {
-                            data: ["Abel","Bart","Chris","Diana","Edward","Flora"],
-                        }
-                    }
-                },
-                {
-                    name: "yAxis",
-                    content: {
-                        yAxis: {
-                        }
-                    }
-                },                
-                {
-                    name: "polar",
-                    content: {
-                        polar: {
-
-                        }
-                    }
-                },
-                {
-                    name: "angleAxis",
-                    content: {
-                        angleAxis: {
-                            data: ["Abel","Bart","Chris","Diana","Edward","Flora"],
-                        }
-                    }
-                },
-                {
-                    name: "radiusAxis",
-                    content: {
-                        radiusAxis: {
-
-                        }
-                    }
-                },
-                {
-                    name: "series",
-                    content: {
-                        series: [
-                            {
-                                name: 'Installed apps',
-                                type: ct.type,
-                                data: [5, 20, 36, 10, 10, 20],
-                            }
-                        ]
-                    }
-                },
-            ];*/
-
+            let ct = cc.chartType;
             let options = merger.merge(ct.allowedParameters);
-            console.log("STORE: ", vm.getChartType());
+            console.log("STORE: ", cc.chartType);
             console.log("MERGED: ",options);
             myChart.setOption(options);
         },
     },
     watch: {
-        getChartConfigUpdates: {
-            handler: function(getChartConfigUpdates, oldGetChartConfigUpdates) {
-                this.dispose();
-                this.drawLine();
+        getChartTypeUpdates: {
+            handler: function(getChartTypeUpdates, oldGetChartTypeUpdates) {
+                this.redraw();
             },
             deep: true,
-        },
+        }
     }
 }
 </script>

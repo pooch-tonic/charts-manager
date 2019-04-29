@@ -1,20 +1,28 @@
 <template>
-    <BForm @submit="onSubmit">
+    <BForm>
         <div id="chart-toolbar" role="tablist">
             <BInputGroup prepend="type">
-                <BFormSelect label="chart-type" v-model="localChartType">
+                <BFormSelect label="chart-type" v-model="storeChartType">
                     <option 
                     v-for="chartType in getChartTypes()" 
                     :key="chartType.name" 
                     :value="chartType"
-                    :selected="localChartType.name == chartType.name"
+                    :selected="storeChartType.name == chartType.name"
                     >
                         {{ chartType.name }}
                     </option>
                 </BFormSelect>
             </BInputGroup>
+            <BInputGroup prepend="sort">
+                <BFormSelect label="data-sort" v-model="storeDataSort" :options="getSortOptions()"/>
+            </BInputGroup>
             <hr></hr>
-            <BCard no-body v-for="parameter in localChartType.allowedParameters" v-if="parameter.name !== 'series'" :key="parameter.name">
+            <BCard 
+            no-body 
+            v-for="parameter in storeChartType.allowedParameters" 
+            v-if="parameter.name !== 'series' && Object.keys(parameter.content).length !== 0" 
+            :key="parameter.name"
+            >
                 <BCardHeader header-tag="header" role="tab">
                     <BButton block v-b-toggle="'accordion-' + parameter.name" variant="info">
                         {{ parameter.name }}
@@ -64,18 +72,19 @@
 
 <script>
 import { BForm, BButton, BInput, BInputGroup, BCard, BCardHeader, BCardBody, BCardText, BCollapse, BFormSelect } from 'bootstrap-vue'
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import { chartTypes } from '@/config/chart-options';
 import lodash from 'lodash';
 import store from '@/store';
 
+const sortOptions = [
+    {value: null, text: "none"},
+    {value: 'ascendant', text: "ascendant"},
+    {value: 'descendant', text: "descendant"}
+]
+
 export default {
     name: 'ChartToolbar',
-    data() {
-        return {
-            localChartType: store.getters.getChartType()
-        }
-    },
     components: {
         'b-input': BInput,
         'b-input-group': BInputGroup,
@@ -91,16 +100,33 @@ export default {
     computed: {
         ...mapGetters([
             'isParameterAllowed',
-            'getChartType'
+            'getChartConfig',
+            'getDataSort'
         ]),
+        storeChartType: {
+            get() {
+                return this.getChartConfig().chartType;
+            },
+            set(newChartType) {
+                this.$store.commit('UPDATE_CHART_TYPE', newChartType);
+            },
+        },
+        storeDataSort: {
+            get() {
+                return this.getDataSort();
+            },
+            set(newDataSort) {
+                this.$store.commit('UPDATE_DATA_SORT', newDataSort);
+            },
+        },
     },
     methods: {
-        onSubmit(e) {
-
-        },
         getChartTypes() {
             return chartTypes;
-        }
+        },
+        getSortOptions() {
+            return sortOptions;
+        },
     },
 }
 </script>

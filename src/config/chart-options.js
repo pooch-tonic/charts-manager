@@ -8,6 +8,16 @@ const types = {
     select: 'select'
 }
 
+const defaultAxisData = [
+    "Abel", "Bart", "Chris", "Diana", "Edward", "Flora", "Gregory", "Henry", "Iris", "Jayce", "Krystal", "Leo", "Mark", "Norman", "Oriana", "Peter", "Quinn", "Raphael", "Stacie", "Trevor", "Ursula", "Vladimir", "William", "Xiang", "Yannis", "Zephyr"
+]
+const defaultSeriesData = {
+    name: "Installed Apps",
+    data: [
+        5, 20, 36, 10, 10, 20, 1, 18, 48, 16, 24, 10, 44, 5, 18, 46, 17, 34, 35, 27, 0, 6, 19, 4, 24, 56
+    ]
+}
+
 const chartParameters = {
     title: {
         name: 'title',
@@ -36,7 +46,7 @@ const chartParameters = {
         name: 'grid',
         content: {
             top: {
-                value: null,
+                value: 100,
                 type: types.number
             }
         }
@@ -77,11 +87,7 @@ const chartParameters = {
     series: {
         name: 'series',
         content: {
-            value: [{
-                name: 'Installed apps',
-                type: 'bar',
-                data: [5, 20, 36, 10, 10, 20]
-            }],
+            value: [{}],
             type: types.array
         }
     }
@@ -130,7 +136,7 @@ const chartTypes = [
     {
         name: 'pie',
         type: 'pie',
-        isPolar: false,
+        isPolar: true,
         allowedParameters: [
             chartParameters.title,
             chartParameters.legend,
