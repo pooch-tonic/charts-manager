@@ -1,95 +1,96 @@
+/* eslint-disable indent */
 const types = {
-    boolean: "boolean",
-    number: "number",
-    text: "text",
-    array: "array",
-    color: "color",
-    select: "select"
-};
+    boolean: 'boolean',
+    number: 'number',
+    text: 'text',
+    array: 'array',
+    color: 'color',
+    select: 'select'
+}
 
 const chartParameters = {
     title: {
-        name: "title",
+        name: 'title',
         content: {
             text: {
-                default: "Installed apps",
+                value: 'Installed apps',
                 type: types.text
             }
         }
     },
     legend: {
-        name: "legend",
+        name: 'legend',
         content: {
             align: {
-                default: "",
+                value: 'left',
                 type: types.select,
                 options: [
-                    { value: "left", text: "left"},
-                    { value: "center", text: "center"},
-                    { value: "right", text: "right"}
+                    { value: 'left', text: 'left'},
+                    { value: 'center', text: 'center'},
+                    { value: 'right', text: 'right'}
                 ]
             }
         }
     },
     grid: {
-        name: "grid",
+        name: 'grid',
         content: {
             top: {
-                default: 100,
+                value: null,
                 type: types.number
             }
         }
     },
     xAxis: {
-        name: "xAxis",
+        name: 'xAxis',
         content: {
             max: {
-                default: null,
+                value: null,
                 type: types.number
             }
         }
     },
     yAxis: {
-        name: "yAxis",
+        name: 'yAxis',
         content: {
             max: {
-                default: null,
+                value: null,
                 type: types.number
             }
         }
     },
     polar: {
-        name: "polar",
+        name: 'polar',
         content: {
         }
     },
     angleAxis: {
-        name: "angleAxis",
+        name: 'angleAxis',
         content: {
         }
     },
     radiusAxis: {
-        name: "radiusAxis",
+        name: 'radiusAxis',
         content: {
         }
     },
     series: {
-        name: "series",
+        name: 'series',
         content: {
-            default: [{
+            value: [{
                 name: 'Installed apps',
-                type: types.bar,
+                type: 'bar',
                 data: [5, 20, 36, 10, 10, 20]
             }],
             type: types.array
         }
     }
-};
+}
 
 const chartTypes = [
     {
-        name: "line",
-        type: "line",
+        name: 'line',
+        type: 'line',
         isPolar: false,
         allowedParameters: [
             chartParameters.title,
@@ -101,8 +102,8 @@ const chartTypes = [
         ]
     },
     {
-        name: "bar (cartesian 2D)",
-        type: "bar",
+        name: 'bar (cartesian 2D)',
+        type: 'bar',
         isPolar: false,
         allowedParameters: [
             chartParameters.title,
@@ -114,8 +115,8 @@ const chartTypes = [
         ]
     },
     {
-        name: "bar (polar)",
-        type: "bar",
+        name: 'bar (polar)',
+        type: 'bar',
         isPolar: true,
         allowedParameters: [
             chartParameters.title,
@@ -127,8 +128,8 @@ const chartTypes = [
         ]
     },
     {
-        name: "pie",
-        type: "pie",
+        name: 'pie',
+        type: 'pie',
         isPolar: false,
         allowedParameters: [
             chartParameters.title,
@@ -139,9 +140,9 @@ const chartTypes = [
             chartParameters.series
         ]
     }
-];
+]
 
 export {
     chartParameters,
-    chartTypes,
-};
+    chartTypes
+}

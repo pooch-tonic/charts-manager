@@ -38,9 +38,6 @@ export default {
             let cc = vm.getChartConfig();
             let ct = vm.getChartType();
             let cp = vm.getCurrentParameters();
-            console.log(cp);
-            
-            let optionsArray = [];
 
             /*cp.
 
@@ -121,11 +118,12 @@ export default {
                         ]
                     }
                 },
-            ];
+            ];*/
 
-            let options = merger.merge(optionsArray);
-
-            myChart.setOption(options);*/
+            let options = merger.merge(ct.allowedParameters);
+            console.log("STORE: ", vm.getChartType());
+            console.log("MERGED: ",options);
+            myChart.setOption(options);
         },
     },
     watch: {

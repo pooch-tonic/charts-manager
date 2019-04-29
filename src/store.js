@@ -1,43 +1,46 @@
+/* eslint-disable indent */
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { chartTypes } from '@/config/chart-options'
 
 Vue.use(Vuex)
-import { getField, updateField } from 'vuex-map-fields';
-import { chartTypes } from '@/config/chart-options';
 
 export default new Vuex.Store({
     state: {
-        appTitle: "Charts Manager",
+        appTitle: 'Charts Manager',
         chartConfig: {
             chartType: chartTypes[1],
-            currentParameters: {},
-        },
+            currentParameters: {}
+        }
     },
     getters: {
-        getField,
-        getCurrentParameters: function(state) {
+        getCurrentParameters: function (state) {
             return () => {
-                return state.chartConfig.currentParameters;
+                return state.chartConfig.currentParameters
             }
         },
         getChartConfig: state => state.chartConfig,
-        getChartType: function(state) {
+        getChartType: function (state) {
             return () => {
-                return state.chartConfig.chartType;
+                return state.chartConfig.chartType
             }
         },
-        isParameterAllowed: function(state) {
+        isParameterAllowed: function (state) {
             return (parameterName) => {
-                let allowedParameters = state.chartConfig.chartType.allowedParameters;
+                let allowedParameters = state.chartConfig.chartType.allowedParameters
                 if (allowedParameters.indexOf(parameterName) > -1) {
-                    return true;
+                    return true
                 }
-                return false;
+                return false
             }
         }
     },
     mutations: {
-        updateField,
+        UPDATE_CHART_TYPE: function (state, {field, value}) {
+            Object.assign(state.chartConfig, {
+                [field]: value
+            })
+        }
     },
     actions: {
 
