@@ -8,6 +8,7 @@ import echarts from 'echarts'
 import store from '@/store'
 import { mapState, mapGetters} from 'vuex'
 import merger from '@/util/chart-options-merger'
+import mapper from '@/util/chart-data-mapper'
 
 export default {
     name: 'BarChart',
@@ -20,7 +21,8 @@ export default {
         },
         ...mapGetters([
             'getChartConfig',
-            'getDataSort'
+            'getDataSort',
+            'getSeries'
         ]),
     },
     mounted() {
@@ -40,10 +42,14 @@ export default {
             let vm = this;
             let cc = vm.getChartConfig();
             let ds = vm.getDataSort();
+            let se = vm.getSeries();
             let ct = cc.chartType;
+            
             let options = merger.merge(ct.allowedParameters, ds);
+            options = mapper.mapData(options, ct.type, ct.isPolar, ds, se);
             // DEBUG console.log("STORE: ", cc.chartType);
-            // DEBUG console.log("MERGED: ",options);
+            // DEBUG 
+            console.log("MERGED: ",options);
             myChart.setOption(options);
         },
     },

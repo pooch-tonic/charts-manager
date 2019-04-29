@@ -44,6 +44,10 @@ const chartParameters = {
     xAxis: {
         name: 'xAxis',
         content: {
+            min: {
+                value: null,
+                type: types.number
+            },
             max: {
                 value: null,
                 type: types.number
@@ -53,6 +57,10 @@ const chartParameters = {
     yAxis: {
         name: 'yAxis',
         content: {
+            min: {
+                value: null,
+                type: types.number
+            },
             max: {
                 value: null,
                 type: types.number
@@ -67,18 +75,27 @@ const chartParameters = {
     angleAxis: {
         name: 'angleAxis',
         content: {
+            startAngle: {
+                value: 90,
+                type: types.number
+            },
+            clockwise: {
+                value: true,
+                type: types.boolean
+            },
+            min: {
+                value: null,
+                type: types.number
+            },
+            max: {
+                value: null,
+                type: types.number
+            }
         }
     },
     radiusAxis: {
         name: 'radiusAxis',
         content: {
-        }
-    },
-    series: {
-        name: 'series',
-        content: {
-            value: [{}],
-            type: types.array
         }
     }
 }
@@ -94,7 +111,6 @@ const chartTypes = [
             chartParameters.grid,
             chartParameters.xAxis,
             chartParameters.yAxis,
-            chartParameters.series
         ]
     },
     {
@@ -108,7 +124,6 @@ const chartTypes = [
             chartParameters.grid,
             chartParameters.xAxis,
             chartParameters.yAxis,
-            chartParameters.series
         ]
     },
     {
@@ -121,7 +136,6 @@ const chartTypes = [
             chartParameters.polar,
             chartParameters.angleAxis,
             chartParameters.radiusAxis,
-            chartParameters.series
         ]
     },
     {
@@ -134,7 +148,6 @@ const chartTypes = [
             chartParameters.polar,
             chartParameters.angleAxis,
             chartParameters.radiusAxis,
-            chartParameters.series
         ]
     }
 ]

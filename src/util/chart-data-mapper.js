@@ -4,52 +4,49 @@
 
 /* eslint-disable indent */
 import lodash from 'lodash';
-import ChartData from '@/config/chart-data'
+import { defaultSeries } from '@/config/chart-data'
 
-const defaultData = ChartData.defaultData;
-
-const assignToSeriesItem = function(item, coordinateSystemName, chartTypeName, sortedData) {
-    _.assign(item, {coordinateSystem: coordinateSystemName});
-    _.assign(item, {name: defaultData.name});
-    _.assign(item, {type: chartTypeName});
-    _.assign(item, {data: _.map(sortedData, 'value')});
-    return item;
+const assignToSeriesItem = function(index, dataset, coordinateSystemName, chartTypeName, options) {
+    options.series[index] = dataset
+    console.log("HERE",options);
+    return options;
 }
 
-const assignToAxis = function(options, axisName) {
-    _.assign(options[axisName], {data: _.map(defaultData.data, 'property')})
+const assignToAxis = function(index, dataset, options, axisName) {
+    _.assign(options[axisName], {data: _.map(dataset.data, 'property')})
+
     return options;
 }
 
 const getSortedData = function(dataSortType) {
-    let sortedData = _.clone(defaultData.data);
-
+    
     switch(dataSortType) {
         case 'ascendant':
-        sortedData = _.sortBy(sortedData, ['value', 'property'])
+        result = _.sortBy(result, ['value', 'property'])
         break;
         case 'descendant':
-        sortedData = _.reverse(_.sortBy(sortedData, ['value', 'property']))
+        result = _.reverse(_.sortBy(result, ['value', 'property']))
+        break;
+        case 'alphabetical':
+        result = _.sortBy(result, ['property', 'value'])
         break;
         case 'none':
         default:
         break;
     }
-    return sortedData;
+    return result;
 }
 
 export default {
-    mapData: function(options, chartTypeName, isPolar, dataSortType) {
-        let series = options.series;
-        let sortedData = getSortedData(dataSortType);
+    mapData: function(options, chartTypeName, isPolar, dataSortType, series) {
+        options['series'] = [];
         if (isPolar) {
-            series.forEach(item => assignToSeriesItem(item, 'polar', chartTypeName, sortedData));
-            assignToAxis(options, 'angleAxis');
+            series.forEach((dataset, index) => assignToSeriesItem(index, dataset, 'polar', chartTypeName, options));
+            //assignToAxis(0, options, 'angleAxis');
         } else {
-            series.forEach(item => assignToSeriesItem(item, 'cartesian2d', chartTypeName, sortedData));
-            assignToAxis(options, 'xAxis');
+            series.forEach((dataset, index) => assignToSeriesItem(index, dataset, 'cartesian2d', chartTypeName, options));
+            //assignToAxis(0, options, 'xAxis');
         }
-
         console.log(options);
         return options;
     }

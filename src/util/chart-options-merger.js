@@ -11,19 +11,16 @@ export default {
             let content = option.content;
             let propsToInsert = {};
 
-            if (option.name !== "series") {
-                _.forEach(content, function(parentValue, key) {
+            _.forEach(content, function(parentValue, key) {
+                if (parentValue.type === 'number' && parentValue.value === '') {
+                    propsToInsert[key] = null;
+                } else {
                     propsToInsert[key] = parentValue.value;
-                });
-            } else {
-                propsToInsert = content.value;
-            }
+                }
+            });
 
             filteredOptions[option.name] = propsToInsert;
         });
-
-        filteredOptions = Mapper.mapData(filteredOptions, chartType.type, chartType.isPolar, dataSortType);
-        
         return filteredOptions;
     },
 }
