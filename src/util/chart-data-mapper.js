@@ -81,22 +81,46 @@ const getSortedData = function(dataset) {
     return dataset;
 }*/
 
+const bindByChartSystem = function(entry, chartSystemName) {
+    let entryToInsert = {};
+    let encodeToInsert = {};
+
+    switch (chartSystemName) {
+        case 'cartesian2d':
+            encodeToInsert['x'] = entry.axis[0].dimensions;
+            encodeToInsert['y'] = entry.axis[1].dimensions;
+        break;
+        case 'polar':
+            encodeToInsert['angle'] = entry.axis[0].dimensions;
+            encodeToInsert['radius'] = entry.axis[1].dimensions;
+        break;
+        default:
+        break;
+    }
+    entryToInsert['type'] = entry.type.type;
+    entryToInsert['encode'] = encodeToInsert;
+    return entryToInsert;
+}
+
 export default {
-    mapData: function(options, data) {
-        options['series'] = []
+    mapData: function(options, data, chartSystemName) {
         let datasetToInsert = {};
+        let seriesToInsert = [];
         let dimensions = data.dataset.dimensions;
+        let mainCategoryName = dimensions[0].name;
 
         datasetToInsert['source'] = data.dataset.source;
         datasetToInsert['dimensions'] = _.map(dimensions, 'name');
 
         options['dataset'] = datasetToInsert;
 
-        let dataDimensions = _.tail(dimensions);
-        dataDimensions.forEach(dimension => (
-            options.series.push({type: dimension.type.type})
-        ));
+        data.series.forEach(entry => {
+            if (entry.show) {
+                seriesToInsert.push(bindByChartSystem(entry, chartSystemName));
+            }
+        });
 
+        options.series = seriesToInsert;
         return options;
     }
 }

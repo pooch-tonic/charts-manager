@@ -13,7 +13,7 @@ export default new Vuex.Store({
         chartConfig: {
             chartSystem: chartSystemTypes.cartesian2d,
             sortType: 'none',
-            sortedData: null
+            sortedData: null,
         },
         data: _.clone(defaultData)
     },
@@ -42,7 +42,7 @@ export default new Vuex.Store({
             return () => {
                 return state.chartConfig.sortType
             }
-        },
+        }
     },
     mutations: {
         UPDATE_SORT_TYPE: function(state, newSortType) {

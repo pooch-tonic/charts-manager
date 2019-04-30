@@ -32,7 +32,7 @@
                     >
                         <BCardHeader header-tag="header" role="tab">
                             <BButton block v-b-toggle="'accordion-' + parameter.name" variant="info">
-                                {{ parameter.name }}
+                                {{ parameter.displayName }}
                             </BButton>
                         </BCardHeader>
                         <BCollapse :id="'accordion-' + parameter.name" accordion="chartsToolbarMenu">
@@ -82,46 +82,69 @@
                 <div id="series-toolbar" class="tablist" role="tablist">
                     <BCard 
                     no-body
-                    v-for="(dimension, index) in storeData.dataset.dimensions"
+                    v-for="(entry, index) in storeData.series"
                     :key="index"
                     >
                         <BCardHeader header-tag="header" role="tab">
-                            <BButton v-b-toggle="'dimension-accordion-' + index" block variant="info">
-                                {{ dimension.name }}
+                            <BButton v-b-toggle="'series-accordion-' + index" block variant="info">
+                                {{ entry.name }}
                             </BButton>
                         </BCardHeader>
-                        <BCollapse :id="'dimension-accordion-' + index" accordion="dimensionsToolbarMenu">
+                        <BCollapse :id="'series-accordion-' + index" accordion="seriesToolbarMenu">
                             <BCardBody>
-                                <!--<BInputGroup prepend="show">
+                                <BInputGroup prepend="show">
                                     <BFormCheckbox
                                     switch
                                     size="lg"
                                     label="show" 
                                     type="checkbox"
-                                    v-model="dimension.show"
+                                    v-model="entry.show"
                                     />
-                                </BInputGroup>-->
+                                </BInputGroup>
                                 <BInputGroup prepend="name">
                                     <BInput
                                     label="name" 
                                     type="text"
-                                    v-model="dimension.name"
+                                    v-model="entry.name"
                                     />
                                 </BInputGroup>
-                                <BInputGroup prepend="type" v-if="dimension.type">
+                                <BInputGroup prepend="type">
                                     <BFormSelect
                                     label="type" 
-                                    v-model="dimension.type"
+                                    v-model="entry.type"
                                     >
                                         <option 
-                                        v-for="(type, index) in storeChartSystem.allowedChartTypes" 
+                                        v-for="(chartType, index) in storeChartSystem.allowedChartTypes" 
                                         :key="index"
-                                        :value="type"
+                                        :value="chartType"
                                         >
-                                            {{ type.name }}
+                                            {{ chartType.name }}
                                         </option>
                                     </BFormSelect>
                                 </BInputGroup>
+                                <BCard 
+                                no-body
+                                v-for="(axis, index) in entry.axis"
+                                :key="index"
+                                >
+                                    <BCardHeader header-tag="header" role="tab">
+                                        <BButton v-b-toggle="'axis-accordion-' + index" block variant="info">
+                                            {{ axis.id }}
+                                        </BButton>
+                                    </BCardHeader>
+                                    <BCollapse :id="'axis-accordion-' + index" accordion="axisToolbarMenu">
+                                        <BCardBody>
+                                            <BFormCheckboxGroup
+                                            :id="axis.id"
+                                            v-model="axis.dimensions"
+                                            :options="storeDimensions"
+                                            class="multiselect"
+                                            stacked
+                                            />
+                                        </BCardBody>
+                                    </BCollapse>
+                                </BCard>
+
                                 <!--<BInputGroup prepend="sort">
                                     <BFormSelect
                                     label="type" 
@@ -143,14 +166,42 @@
                 <!--<BButton type="submit">Submit</BButton>-->
             </BForm>
         </BTab>
+        <!--<BTab title="axis">
+            <BForm>
+                <div id="axis-toolbar" class="tablist" role="tablist">
+                    <BCard no-body>
+                        <BCardHeader header-tag="header" role="tab">
+                            <BButton v-b-toggle="'axis-accordion-1'" block variant="info">
+                                X Axis
+                            </BButton>
+                        </BCardHeader>
+                        <BCollapse id="axis-accordion-1" accordion="axisToolbarMenu">
+                            <BCardBody>
+                                <BInputGroup 
+                                v-for="(dimension, index) in storeData.dataset.dimensions" 
+                                :key="index"
+                                :prepend="dimension.name">
+                                    <BFormCheckbox
+                                    switch
+                                    size="lg"
+                                    :label="dimension.name" 
+                                    type="checkbox"
+                                    v-model="dimension."
+                                    />
+                                </BInputGroup>
+                            </BCardBody>
+                        </BCollapse>
+                    </BCard>
+                </div>
+            </BForm>
+        </BTab>-->
     </BTabs>
-    
 </template>
 
 <script>
-import { BTabs, BTab, BForm, BFormCheckbox, BButton, BInput, BInputGroup, BCard, BCardHeader, BCardBody, BCardText, BCollapse, BFormSelect } from 'bootstrap-vue'
+import { BTabs, BTab, BForm, BFormCheckbox, BFormCheckboxGroup, BButton, BInput, BInputGroup, BCard, BCardHeader, BCardBody, BCardText, BCollapse, BFormSelect } from 'bootstrap-vue'
 import { mapGetters } from 'vuex';
-import { chartSystemTypes, chartParameters, sortTypes } from '@/config/chart-options';
+import { chartSystemTypes, chartParameters, sortTypes, axisTypes } from '@/config/chart-options';
 import lodash from 'lodash';
 import store from '@/store';
 
@@ -167,6 +218,7 @@ export default {
         'b-collapse': BCollapse,
         'b-form': BForm,
         'b-form-checkbox': BFormCheckbox,
+        'b-form-checkbox-group': BFormCheckboxGroup,
         'b-form-select': BFormSelect,
         'b-tab': BTab,
         'b-tabs': BTabs  
@@ -210,6 +262,11 @@ export default {
                 this.$store.commit('UPDATE_DATA', newData);
             },
         },
+        storeDimensions: {
+            get() {
+                return _.map(this.getData().dataset.dimensions, 'name');
+            }
+        }
     },
     methods: {
         getChartSystemTypes() {
@@ -220,6 +277,9 @@ export default {
         },
         getSortTypes() {
             return sortTypes;
+        },
+        getAxisTypes() {
+            return axisTypes;
         }
     },
 }
@@ -247,5 +307,8 @@ form, .tablist, .tab-pane, .tab-content {
     height: 100%;
     padding: 7px 0 0 60px;
     transform: scale(1.8);
+}
+.multiselect {
+    text-align: left;
 }
 </style>

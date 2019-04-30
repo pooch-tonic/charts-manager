@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { chartTypes, sortTypes } from './chart-options'
+import { chartTypes, sortTypes, axisTypes } from './chart-options'
 
 const defaultData = {
     title: "Installed apps",
@@ -7,22 +7,15 @@ const defaultData = {
         dimensions: [
             {
                 name: "name",
-                show: true
             },
             {
                 name: "installed apps",
-                type: chartTypes.bar2d,
-                show: true
             },
             {
                 name: "age",
-                type: chartTypes.bar2d,
-                show: true
             },
             {
                 name: "screen time in hrs",
-                type: chartTypes.bar2d,
-                show: true
             }
         ],
         source: [
@@ -53,8 +46,24 @@ const defaultData = {
             [ "Yannis", 10, 11, 6 ],
             [ "Zephyr", 24, 48, 2 ]
         ],
-    },   
-    show: true,
+    },
+    series: [
+        {
+            name: "installed apps",
+            type: chartTypes.bar2d,
+            axis: [
+                {
+                    id: 'x1',
+                    dimensions: ['name']
+                },
+                {
+                    id: 'y1',
+                    dimensions: ['installed apps']
+                },
+            ],
+            show: true
+        }
+    ],
     sort: sortTypes.none
 }
 

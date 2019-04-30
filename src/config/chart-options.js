@@ -16,9 +16,29 @@ const sortTypes = {
     alphabetical: 'alphabetical'
 }
 
+const axisTypes = {
+    x: {
+        name: 'x',
+        displayName: 'x axis'
+    },
+    y: {
+        name: 'y',
+        displayName: 'y axis'
+    },
+    angle: {
+        name: 'angle',
+        displayName: 'angle axis'
+    },
+    radius: {
+        name: 'radius',
+        displayName: 'radius axis'
+    }
+}
+
 const chartParameters = {
     title: {
         name: 'title',
+        displayName: 'title',
         content: {
             text: {
                 value: 'Installed apps',
@@ -28,6 +48,7 @@ const chartParameters = {
     },
     legend: {
         name: 'legend',
+        displayName: 'legend',
         content: {
             align: {
                 value: 'left',
@@ -42,6 +63,7 @@ const chartParameters = {
     },
     grid: {
         name: 'grid',
+        displayName: 'grid',
         content: {
             top: {
                 value: 100,
@@ -51,6 +73,7 @@ const chartParameters = {
     },
     xAxis: {
         name: 'xAxis',
+        displayName: 'x axis',
         content: {
             min: {
                 value: null,
@@ -68,6 +91,7 @@ const chartParameters = {
     },
     yAxis: {
         name: 'yAxis',
+        displayName: 'y axis',
         content: {
             min: {
                 value: null,
@@ -81,11 +105,13 @@ const chartParameters = {
     },
     polar: {
         name: 'polar',
+        displayName: 'polar',
         content: {
         }
     },
     angleAxis: {
         name: 'angleAxis',
+        displayName: 'angle axis',
         content: {
             startAngle: {
                 value: 90,
@@ -107,11 +133,13 @@ const chartParameters = {
     },
     radiusAxis: {
         name: 'radiusAxis',
+        displayName: 'radius axis',
         content: {
         }
     },
     tooltip: {
         name: 'tooltip',
+        displayName: 'tooltip',
         content: {
 
         }
@@ -176,6 +204,7 @@ const chartTypes = {
 
 const chartSystemTypes = {
     cartesian2d: {
+        name: 'cartesian2d',
         allowedParameters: [
             chartParameters.title,
             chartParameters.legend,
@@ -187,9 +216,14 @@ const chartSystemTypes = {
         allowedChartTypes: [
             chartTypes.line,
             chartTypes.bar2d
+        ],
+        allowedAxisTypes: [
+            axisTypes.x,
+            axisTypes.y
         ]
     },
     polar: {
+        name: 'polar',
         allowedParameters: [
             chartParameters.title,
             chartParameters.legend,
@@ -201,6 +235,10 @@ const chartSystemTypes = {
         allowedChartTypes: [
             chartTypes.barPolar,
             chartTypes.pie
+        ],
+        allowedAxisTypes: [
+            axisTypes.angle,
+            axisTypes.radius
         ]
     }
 }
@@ -209,5 +247,6 @@ export {
     chartParameters,
     chartSystemTypes,
     chartTypes,
+    axisTypes,
     sortTypes
 }

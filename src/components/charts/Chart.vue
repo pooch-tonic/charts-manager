@@ -54,7 +54,7 @@ export default {
             console.log(this.$store);
 
             let options = merger.merge(cs.allowedParameters);
-            options = mapper.mapData(options, data);
+            options = mapper.mapData(options, data, cs.name);
             // DEBUG console.log("STORE: ", cc.chartType);
             // DEBUG console.log("MERGED: ",options);
             console.log(options);
@@ -83,7 +83,7 @@ export default {
                 this.redraw();
             },
             deep: true,
-        },
+        }
     }
 }
 </script>

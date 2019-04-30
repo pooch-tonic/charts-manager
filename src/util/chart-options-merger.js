@@ -5,7 +5,8 @@ export default {
 
     merge: function(options) {
         let filteredOptions = {};
-        options.forEach(option => {
+        Object.keys(options).forEach(key => {
+            let option = options[key]
             let content = option.content;
             let propsToInsert = {};
 
