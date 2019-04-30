@@ -7,12 +7,13 @@ import lodash from 'lodash';
 import { defaultSeries } from '@/config/chart-data'
 
 const assignToSeriesItem = function(index, dataset, coordinateSystemName, chartTypeName, options) {
-    options.series[index] = dataset
-    console.log("HERE",options);
+    dataset['type'] = chartTypeName;
+    dataset['coordinateSystem'] = coordinateSystemName;
+    options.series[index] = dataset;
     return options;
 }
 
-const assignToAxis = function(index, dataset, options, axisName) {
+const assignToAxis = function(dataset, options, axisName) {
     _.assign(options[axisName], {data: _.map(dataset.data, 'property')})
 
     return options;
@@ -41,13 +42,20 @@ export default {
     mapData: function(options, chartTypeName, isPolar, dataSortType, series) {
         options['series'] = [];
         if (isPolar) {
-            series.forEach((dataset, index) => assignToSeriesItem(index, dataset, 'polar', chartTypeName, options));
-            //assignToAxis(0, options, 'angleAxis');
+            series.forEach((dataset, index) => {
+                if (dataset.show) {
+                    assignToSeriesItem(index, dataset, 'polar', chartTypeName, options);
+                    assignToAxis(dataset, options, 'angleAxis');
+                }
+            })
         } else {
-            series.forEach((dataset, index) => assignToSeriesItem(index, dataset, 'cartesian2d', chartTypeName, options));
-            //assignToAxis(0, options, 'xAxis');
+            series.forEach((dataset, index) => {
+                if (dataset.show) {
+                    assignToSeriesItem(index, dataset, 'cartesian2d', chartTypeName, options);
+                    assignToAxis(dataset, options, 'xAxis');
+                }
+            })
         }
-        console.log(options);
         return options;
     }
 }

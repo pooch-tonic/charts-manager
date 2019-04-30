@@ -61,7 +61,7 @@ body, html {
 
 #app-header {
     background: #ffffff;
-    box-shadow: 0 5px 8px 2px #eaeaea;
+    box-shadow: 0 3px 8px 1px #eaeaea;
     display: flex;
     height: 90px;
     position: fixed;

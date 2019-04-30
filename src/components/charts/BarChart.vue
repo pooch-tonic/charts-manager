@@ -5,7 +5,6 @@
 
 <script>
 import echarts from 'echarts'
-import store from '@/store'
 import { mapState, mapGetters} from 'vuex'
 import merger from '@/util/chart-options-merger'
 import mapper from '@/util/chart-data-mapper'
@@ -14,10 +13,13 @@ export default {
     name: 'BarChart',
     computed: {
         getChartTypeUpdates() {
-            return store.getters.getChartConfig().chartType
+            return this.getChartConfig().chartType
         },
         getDataSortUpdates() {
-            return store.getters.getDataSort()
+            return this.getDataSort()
+        },
+        getSeriesUpdates() {
+            return this.getSeries()
         },
         ...mapGetters([
             'getChartConfig',
@@ -45,11 +47,12 @@ export default {
             let se = vm.getSeries();
             let ct = cc.chartType;
             
+            console.log(this.$store);
+
             let options = merger.merge(ct.allowedParameters, ds);
             options = mapper.mapData(options, ct.type, ct.isPolar, ds, se);
             // DEBUG console.log("STORE: ", cc.chartType);
-            // DEBUG 
-            console.log("MERGED: ",options);
+            // DEBUG console.log("MERGED: ",options);
             myChart.setOption(options);
         },
     },
@@ -64,7 +67,13 @@ export default {
             handler: function(getDataSortUpdates, oldGetDataSortUpdates) {
                 this.redraw();
             }
-        }
+        },
+        getSeriesUpdates: {
+            handler: function(getSeriesUpdates, oldGetSeriesUpdates) {
+                this.redraw();
+            },
+            deep: true,
+        },
     }
 }
 </script>

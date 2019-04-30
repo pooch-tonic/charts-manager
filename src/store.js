@@ -13,7 +13,6 @@ export default new Vuex.Store({
         chartConfig: {
             chartType: _.clone(chartTypes[1])
         },
-        dataSort: 'none',
         series: _.clone(defaultSeries)
     },
     getters: {

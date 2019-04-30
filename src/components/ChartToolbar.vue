@@ -2,21 +2,17 @@
     <BTabs>
         <BTab title="chart" active>
             <BForm>
-                <div id="chart-toolbar" role="tablist">
+                <div id="chart-toolbar" class="tablist" role="tablist">
                     <BInputGroup prepend="type">
                         <BFormSelect label="chart-type" v-model="storeChartType">
                             <option 
                             v-for="chartType in getChartTypes()" 
                             :key="chartType.name" 
                             :value="chartType"
-                            :selected="storeChartType.name == chartType.name"
                             >
                                 {{ chartType.name }}
                             </option>
                         </BFormSelect>
-                    </BInputGroup>
-                    <BInputGroup prepend="sort">
-                        <BFormSelect label="data-sort" v-model="storeDataSort" :options="getSortOptions()"/>
                     </BInputGroup>
                     <hr/>
                     <BCard 
@@ -60,7 +56,6 @@
                                         v-for="option in subParameter.options"
                                         :key="option.value"
                                         :value="option.value"
-                                        :selected="option.value == subParameter.default ? 'selected' : ''"
                                         >
                                             {{ option.text }}
                                         </option>
@@ -75,20 +70,62 @@
         </BTab>
         <BTab title="series">
             <BForm>
-                <div id="chart-toolbar" role="tablist">
+                <div id="series-toolbar" class="tablist" role="tablist">
                     <BCard 
                     no-body
-                    v-for="dataset in getSeries()"
+                    v-for="(dataset, index) in storeSeries"
+                    :key="index"
                     >
                         <BCardHeader header-tag="header" role="tab">
-                            <BButton block variant="info">
-
+                            <BButton v-b-toggle="'series-accordion-' + index" block variant="info">
+                                {{ dataset.name }}
                             </BButton>
                         </BCardHeader>
-                        <BCollapse accordion="seriesToolbarMenu">
+                        <BCollapse :id="'series-accordion-' + index" accordion="seriesToolbarMenu">
                             <BCardBody>
-                                <BInputGroup>
-                                   
+                                <BInputGroup prepend="show">
+                                    <BFormCheckbox
+                                    switch
+                                    size="lg"
+                                    label="show" 
+                                    type="checkbox"
+                                    v-model="dataset.show"
+                                    />
+                                </BInputGroup>
+                                <BInputGroup prepend="name">
+                                    <BInput
+                                    label="name" 
+                                    type="text"
+                                    v-model="dataset.name"
+                                    />
+                                </BInputGroup>
+                                <BInputGroup prepend="type">
+                                    <BFormSelect
+                                    label="type" 
+                                    v-model="dataset.type"
+                                    >
+                                        <option 
+                                        v-for="(type, index) in getChartTypes()" 
+                                        :key="index"
+                                        :value="type"
+                                        >
+                                            {{ type.name }}
+                                        </option>
+                                    </BFormSelect>
+                                </BInputGroup>
+                                <BInputGroup prepend="sort">
+                                    <BFormSelect
+                                    label="type" 
+                                    v-model="dataset.sort"
+                                    >
+                                        <option 
+                                        v-for="(sortType, key) in getSortTypes()" 
+                                        :key="key"
+                                        :value="sortType"
+                                        >
+                                            {{ sortType }}
+                                        </option>
+                                    </BFormSelect>
                                 </BInputGroup>
                             </BCardBody>
                         </BCollapse>
@@ -104,17 +141,9 @@
 <script>
 import { BTabs, BTab, BForm, BFormCheckbox, BButton, BInput, BInputGroup, BCard, BCardHeader, BCardBody, BCardText, BCollapse, BFormSelect } from 'bootstrap-vue'
 import { mapGetters } from 'vuex';
-import { chartTypes } from '@/config/chart-options';
-import { defaultSeries } from '@/config/chart-data';
+import { chartTypes, sortTypes } from '@/config/chart-options';
 import lodash from 'lodash';
 import store from '@/store';
-
-const sortOptions = [
-    {value: 'none', text: "none"},
-    {value: 'ascendant', text: "ascendant"},
-    {value: 'descendant', text: "descendant"},
-    {value: 'alphabetical', text: "alphabetical"}
-]
 
 export default {
     name: 'ChartToolbar',
@@ -136,7 +165,8 @@ export default {
     computed: {
         ...mapGetters([
             'getChartConfig',
-            'getDataSort'
+            'getDataSort',
+            'getSeries'
         ]),
         storeChartType: {
             get() {
@@ -154,28 +184,27 @@ export default {
                 this.$store.commit('UPDATE_DATA_SORT', newDataSort);
             },
         },
+        storeSeries: {
+            get() {
+                return this.getSeries();
+            },
+            set(newSeries) {
+                this.$store.commit('UPDATE_SERIES', newSeries);
+            },
+        },
     },
     methods: {
         getChartTypes() {
             return chartTypes;
         },
-        getSortOptions() {
-            return sortOptions;
-        },
-        getSeries() {
-            return defaultSeries;
+        getSortTypes() {
+            return sortTypes;
         }
     },
 }
 </script>
 
 <style scoped>
-#chart-toolbar {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: 20px 15px 0;
-}
 .input-group {
     display: flex;
     padding: 3px 0;
@@ -183,5 +212,19 @@ export default {
 }
 .input {
     flex: 1;
+}
+.tablist {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px 15px 0;
+}
+form, .tablist, .tab-pane, .tab-content {
+    outline: none !important;
+}
+.custom-switch {
+    height: 100%;
+    padding: 7px 0 0 60px;
+    transform: scale(1.8);
 }
 </style>

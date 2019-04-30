@@ -1,4 +1,6 @@
 /* eslint-disable indent */
+import { chartTypes, sortTypes } from './chart-options'
+
 const defaultSeries = [
     {
         name: "Installed apps",
@@ -29,7 +31,10 @@ const defaultSeries = [
             { property: "Xiang", value: 21 },
             { property: "Yannis", value: 10 },
             { property: "Zephyr", value: 24 }
-        ]
+        ],
+        type: chartTypes[0],
+        show: true,
+        sort: sortTypes.none
     },
     {
         name: "Age",
@@ -60,7 +65,10 @@ const defaultSeries = [
             { property: "Xiang", value: 18 },
             { property: "Yannis", value: 11 },
             { property: "Zephyr", value: 48 }
-        ]
+        ],
+        type: chartTypes[1],
+        show: true,
+        sort: sortTypes.none
     },
     {
         name: "Screen time per day in hours",
@@ -91,7 +99,10 @@ const defaultSeries = [
             { property: "Xiang", value: 7 },
             { property: "Yannis", value: 6 },
             { property: "Zephyr", value: 2 }
-        ]
+        ],
+        type: chartTypes[2],
+        show: true,
+        sort: sortTypes.none
     }
 ]
 

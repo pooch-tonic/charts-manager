@@ -8,6 +8,13 @@ const types = {
     select: 'select'
 }
 
+const sortTypes = {
+    none: 'none',
+    ascendant: 'ascendant',
+    descendant: 'descendant',
+    alphabetical: 'alphabetical',
+}
+
 const chartParameters = {
     title: {
         name: 'title',
@@ -154,5 +161,6 @@ const chartTypes = [
 
 export {
     chartParameters,
-    chartTypes
+    chartTypes,
+    sortTypes
 }
