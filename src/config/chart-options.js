@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+/* eslint-disable semi */
 const types = {
     boolean: 'boolean',
     number: 'number',
@@ -12,7 +13,7 @@ const sortTypes = {
     none: 'none',
     ascendant: 'ascendant',
     descendant: 'descendant',
-    alphabetical: 'alphabetical',
+    alphabetical: 'alphabetical'
 }
 
 const chartParameters = {
@@ -58,6 +59,10 @@ const chartParameters = {
             max: {
                 value: null,
                 type: types.number
+            },
+            type: {
+                value: 'category',
+                type: types.text
             }
         }
     },
@@ -104,11 +109,17 @@ const chartParameters = {
         name: 'radiusAxis',
         content: {
         }
-    }
-}
+    },
+    tooltip: {
+        name: 'tooltip',
+        content: {
 
-const chartTypes = [
-    {
+        }
+    }
+};
+
+const chartTypes = {
+    line: {
         name: 'line',
         type: 'line',
         isPolar: false,
@@ -118,9 +129,10 @@ const chartTypes = [
             chartParameters.grid,
             chartParameters.xAxis,
             chartParameters.yAxis,
+            chartParameters.tooltip
         ]
     },
-    {
+    bar2d: {
         name: 'bar (cartesian 2D)',
         type: 'bar',
         //typeSerie: donne la compatibilité
@@ -131,9 +143,10 @@ const chartTypes = [
             chartParameters.grid,
             chartParameters.xAxis,
             chartParameters.yAxis,
+            chartParameters.tooltip
         ]
     },
-    {
+    barPolar: {
         name: 'bar (polar)',
         type: 'bar',
         isPolar: true,
@@ -143,9 +156,10 @@ const chartTypes = [
             chartParameters.polar,
             chartParameters.angleAxis,
             chartParameters.radiusAxis,
+            chartParameters.tooltip
         ]
     },
-    {
+    pie: {
         name: 'pie',
         type: 'pie',
         isPolar: true,
@@ -155,12 +169,45 @@ const chartTypes = [
             chartParameters.polar,
             chartParameters.angleAxis,
             chartParameters.radiusAxis,
+            chartParameters.tooltip
         ]
     }
-]
+}
+
+const chartSystemTypes = {
+    cartesian2d: {
+        allowedParameters: [
+            chartParameters.title,
+            chartParameters.legend,
+            chartParameters.grid,
+            chartParameters.xAxis,
+            chartParameters.yAxis,
+            chartParameters.tooltip
+        ],
+        allowedChartTypes: [
+            chartTypes.line,
+            chartTypes.bar2d
+        ]
+    },
+    polar: {
+        allowedParameters: [
+            chartParameters.title,
+            chartParameters.legend,
+            chartParameters.polar,
+            chartParameters.angleAxis,
+            chartParameters.radiusAxis,
+            chartParameters.tooltip
+        ],
+        allowedChartTypes: [
+            chartTypes.barPolar,
+            chartTypes.pie
+        ]
+    }
+}
 
 export {
     chartParameters,
+    chartSystemTypes,
     chartTypes,
     sortTypes
 }

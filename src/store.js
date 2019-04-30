@@ -1,8 +1,8 @@
 /* eslint-disable indent */
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { chartTypes } from '@/config/chart-options'
-import { defaultSeries } from '@/config/chart-data'
+import { chartSystemTypes } from '@/config/chart-options'
+import { defaultData } from '@/config/chart-data'
 import lodash from 'lodash'
 
 Vue.use(Vuex)
@@ -11,9 +11,11 @@ export default new Vuex.Store({
     state: {
         appTitle: 'Charts Manager',
         chartConfig: {
-            chartType: _.clone(chartTypes[1])
+            chartSystem: chartSystemTypes.cartesian2d,
+            sortType: 'none',
+            sortedData: null
         },
-        series: _.clone(defaultSeries)
+        data: _.clone(defaultData)
     },
     getters: {
         getChartConfig: function(state) {
@@ -21,27 +23,38 @@ export default new Vuex.Store({
                 return state.chartConfig
             }
         },
-        getChartType: function(state) {
+        getChartSystem: function(state) {
             return () => {
-                return state.chartConfig.chartType
+                return state.chartConfig.chartSystem
             }
         },
-        getSeries: function(state) {
+        getData: function(state) {
             return () => {
-                return state.series
+                return state.data
             }
         },
-        getDataSort: function(state) {
+        getSortedData: function(state) {
             return () => {
-                return state.dataSort
+                return state.chartConfig.sortedData
             }
-        }
+        },
+        getSortType: function(state) {
+            return () => {
+                return state.chartConfig.sortType
+            }
+        },
     },
     mutations: {
-        UPDATE_CHART_TYPE: function (state, newChartType) {
-            Vue.set(state.chartConfig, 'chartType', newChartType)
+        UPDATE_SORT_TYPE: function(state, newSortType) {
+            state.chartConfig.sortType = newSortType;
         },
-        UPDATE_DATA_SORT: function (state, newDataSort) {
+        UPDATE_SORTED_DATA: function(state, newSortedData) {
+            state.chartConfig.sortedData = newSortedData;
+        },
+        UPDATE_CHART_SYSTEM: function(state, newChartSystem) {
+            state.chartConfig.chartSystem = newChartSystem;
+        },
+        UPDATE_DATA_SORT: function(state, newDataSort) {
             state.dataSort = newDataSort;
         },
         UPDATE_SERIES: function(state, newSeries) {

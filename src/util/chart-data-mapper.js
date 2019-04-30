@@ -3,59 +3,100 @@
 */
 
 /* eslint-disable indent */
+/* eslint-disable semi */
 import lodash from 'lodash';
 import { defaultSeries } from '@/config/chart-data'
 
-const assignToSeriesItem = function(index, dataset, coordinateSystemName, chartTypeName, options) {
-    dataset['type'] = chartTypeName;
+/*const assignToCoordinateSystem = function(dataset, coordinateSystemName) {
     dataset['coordinateSystem'] = coordinateSystemName;
-    options.series[index] = dataset;
-    return options;
+    return dataset;
 }
 
-const assignToAxis = function(dataset, options, axisName) {
-    _.assign(options[axisName], {data: _.map(dataset.data, 'property')})
-
-    return options;
+const assignToType = function(dataset, typeName) {
+    dataset['type'] = typeName;
+    return dataset;
 }
 
-const getSortedData = function(dataSortType) {
-    
-    switch(dataSortType) {
+const assignToAxis = function(dataset, options) {
+    let axisName = 'xAxis'
+    let axisObject = null;
+    let mappedData = [];
+
+    if (dataset.type.isPolar) {
+        axisName = 'radiusAxis'
+    }
+
+    mappedData = _.map(dataset.data, 'property')
+    axisObject = _.get(options, axisName);
+    axisObject['data'] = mappedData;
+    options[axisName] = axisObject
+}
+
+const removeKeys = function(dataset, keysToRemove) {
+    keysToRemove.forEach((keyName) => (
+        dataset = _.omit(dataset, keyName)
+    ))
+    return dataset;
+}
+
+const pushDatasetToOptions = function(dataset, options) {
+    options.series.push(dataset);
+}
+
+const assignToOptions = function(dataset, options) {
+    let typeObject = dataset.type;
+    let coordinateSystem = 'cartesian2d';
+    let datasetClone = _.clone(dataset);
+
+    if (typeObject.isPolar) {
+        coordinateSystem = 'polar';
+    }
+
+    datasetClone = assignToCoordinateSystem(datasetClone, coordinateSystem);
+    datasetClone = assignToType(datasetClone, typeObject.type);
+    datasetClone = removeKeys(datasetClone, ['show', 'sort']);
+    pushDatasetToOptions(datasetClone, options);
+}
+
+const getSortedData = function(dataset) {
+    let sortType = dataset.sort;
+    let data = dataset.data;
+
+    switch(sortType) {
         case 'ascendant':
-        result = _.sortBy(result, ['value', 'property'])
+        data = _.sortBy(data, ['value', 'property']);
         break;
         case 'descendant':
-        result = _.reverse(_.sortBy(result, ['value', 'property']))
+        data = _.reverse(_.sortBy(data, ['value', 'property']));
         break;
         case 'alphabetical':
-        result = _.sortBy(result, ['property', 'value'])
+        data = _.sortBy(data, ['property', 'value']);
         break;
         case 'none':
         default:
         break;
     }
-    return result;
-}
+
+    dataset.data = data;
+    return dataset;
+}*/
 
 export default {
-    mapData: function(options, chartTypeName, isPolar, dataSortType, series) {
-        options['series'] = [];
-        if (isPolar) {
-            series.forEach((dataset, index) => {
-                if (dataset.show) {
-                    assignToSeriesItem(index, dataset, 'polar', chartTypeName, options);
-                    assignToAxis(dataset, options, 'angleAxis');
-                }
-            })
-        } else {
-            series.forEach((dataset, index) => {
-                if (dataset.show) {
-                    assignToSeriesItem(index, dataset, 'cartesian2d', chartTypeName, options);
-                    assignToAxis(dataset, options, 'xAxis');
-                }
-            })
-        }
+    mapData: function(options, data) {
+        options['series'] = []
+        let datasetToInsert = {};
+        let dimensions = data.dataset.dimensions;
+
+        datasetToInsert['source'] = data.dataset.source;
+        datasetToInsert['dimensions'] = _.map(dimensions, 'name');
+
+        options['dataset'] = datasetToInsert;
+
+        let dataDimensions = _.tail(dimensions);
+        dataDimensions.forEach(dimension => (
+            options.series.push({type: dimension.type.type})
+        ));
+
         return options;
     }
 }

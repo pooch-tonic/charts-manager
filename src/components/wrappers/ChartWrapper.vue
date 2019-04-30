@@ -1,19 +1,19 @@
 <template>
     <div id="chart-wrapper">
         <ErrorBoundary>
-            <BarChart />
+            <Chart />
         </ErrorBoundary>
     </div>
 </template>
 
 <script>
-import BarChart from '@/components/charts/BarChart'
+import Chart from '@/components/charts/Chart'
 import { ErrorBoundary } from 'vue-error-boundary'
 
 export default {
     name: 'ChartWrapper',
     components: {
-        BarChart,
+        Chart,
         ErrorBoundary,
     },
 }

@@ -4,20 +4,29 @@
             <BForm>
                 <div id="chart-toolbar" class="tablist" role="tablist">
                     <BInputGroup prepend="type">
-                        <BFormSelect label="chart-type" v-model="storeChartType">
+                        <BFormSelect label="chart-type" v-model="storeChartSystem">
+                            <option :value="getChartSystemTypes().cartesian2d">cartesian 2D</option>
+                            <option :value="getChartSystemTypes().polar">polar</option>
+                        </BFormSelect>
+                    </BInputGroup>
+                    <BInputGroup prepend="sort">
+                        <BFormSelect
+                        label="type" 
+                        v-model="storeSortType"
+                        >
                             <option 
-                            v-for="chartType in getChartTypes()" 
-                            :key="chartType.name" 
-                            :value="chartType"
+                            v-for="(sortType, key) in getSortTypes()" 
+                            :key="key"
+                            :value="sortType"
                             >
-                                {{ chartType.name }}
+                                {{ sortType }}
                             </option>
                         </BFormSelect>
                     </BInputGroup>
                     <hr/>
                     <BCard 
                     no-body 
-                    v-for="parameter in storeChartType.allowedParameters" 
+                    v-for="parameter in storeChartSystem.allowedParameters" 
                     v-if="Object.keys(parameter.content).length !== 0" 
                     :key="parameter.name"
                     >
@@ -73,39 +82,39 @@
                 <div id="series-toolbar" class="tablist" role="tablist">
                     <BCard 
                     no-body
-                    v-for="(dataset, index) in storeSeries"
+                    v-for="(dimension, index) in storeData.dataset.dimensions"
                     :key="index"
                     >
                         <BCardHeader header-tag="header" role="tab">
-                            <BButton v-b-toggle="'series-accordion-' + index" block variant="info">
-                                {{ dataset.name }}
+                            <BButton v-b-toggle="'dimension-accordion-' + index" block variant="info">
+                                {{ dimension.name }}
                             </BButton>
                         </BCardHeader>
-                        <BCollapse :id="'series-accordion-' + index" accordion="seriesToolbarMenu">
+                        <BCollapse :id="'dimension-accordion-' + index" accordion="dimensionsToolbarMenu">
                             <BCardBody>
-                                <BInputGroup prepend="show">
+                                <!--<BInputGroup prepend="show">
                                     <BFormCheckbox
                                     switch
                                     size="lg"
                                     label="show" 
                                     type="checkbox"
-                                    v-model="dataset.show"
+                                    v-model="dimension.show"
                                     />
-                                </BInputGroup>
+                                </BInputGroup>-->
                                 <BInputGroup prepend="name">
                                     <BInput
                                     label="name" 
                                     type="text"
-                                    v-model="dataset.name"
+                                    v-model="dimension.name"
                                     />
                                 </BInputGroup>
-                                <BInputGroup prepend="type">
+                                <BInputGroup prepend="type" v-if="dimension.type">
                                     <BFormSelect
                                     label="type" 
-                                    v-model="dataset.type"
+                                    v-model="dimension.type"
                                     >
                                         <option 
-                                        v-for="(type, index) in getChartTypes()" 
+                                        v-for="(type, index) in storeChartSystem.allowedChartTypes" 
                                         :key="index"
                                         :value="type"
                                         >
@@ -113,7 +122,7 @@
                                         </option>
                                     </BFormSelect>
                                 </BInputGroup>
-                                <BInputGroup prepend="sort">
+                                <!--<BInputGroup prepend="sort">
                                     <BFormSelect
                                     label="type" 
                                     v-model="dataset.sort"
@@ -126,7 +135,7 @@
                                             {{ sortType }}
                                         </option>
                                     </BFormSelect>
-                                </BInputGroup>
+                                </BInputGroup>-->
                             </BCardBody>
                         </BCollapse>
                     </BCard>
@@ -141,7 +150,7 @@
 <script>
 import { BTabs, BTab, BForm, BFormCheckbox, BButton, BInput, BInputGroup, BCard, BCardHeader, BCardBody, BCardText, BCollapse, BFormSelect } from 'bootstrap-vue'
 import { mapGetters } from 'vuex';
-import { chartTypes, sortTypes } from '@/config/chart-options';
+import { chartSystemTypes, chartParameters, sortTypes } from '@/config/chart-options';
 import lodash from 'lodash';
 import store from '@/store';
 
@@ -164,38 +173,50 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'getChartConfig',
-            'getDataSort',
-            'getSeries'
+            'getChartSystem',
+            'getSortedData',
+            'getSortType',
+            'getData'
         ]),
-        storeChartType: {
+        storeChartSystem: {
             get() {
-                return this.getChartConfig().chartType;
+                return this.getChartSystem();
             },
-            set(newChartType) {
-                this.$store.commit('UPDATE_CHART_TYPE', newChartType);
+            set(newChartSystem) {
+                this.$store.commit('UPDATE_CHART_SYSTEM', newChartSystem);
             },
         },
-        storeDataSort: {
+        storeSortedData: {
             get() {
-                return this.getDataSort();
+                return this.getSortedData();
             },
-            set(newDataSort) {
-                this.$store.commit('UPDATE_DATA_SORT', newDataSort);
+            set(newSortedData) {
+                this.$store.commit('UPDATE_SORTED_DATA', newSortedData);
             },
         },
-        storeSeries: {
+        storeSortType: {
             get() {
-                return this.getSeries();
+                return this.getSortType();
             },
-            set(newSeries) {
-                this.$store.commit('UPDATE_SERIES', newSeries);
+            set(newSortType) {
+                this.$store.commit('UPDATE_SORT_TYPE', newSortType);
+            },
+        },
+        storeData: {
+            get() {
+                return this.getData();
+            },
+            set(newData) {
+                this.$store.commit('UPDATE_DATA', newData);
             },
         },
     },
     methods: {
-        getChartTypes() {
-            return chartTypes;
+        getChartSystemTypes() {
+            return chartSystemTypes;
+        },
+        getChartParameters() {
+            return chartParameters;
         },
         getSortTypes() {
             return sortTypes;

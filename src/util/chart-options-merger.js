@@ -1,11 +1,9 @@
 /* eslint-disable indent */
-import store from '@/store'
-import Mapper from './chart-data-mapper'
+/* eslint-disable semi */
 
 export default {
 
-    merge: function(options, dataSortType) {
-        let chartType = store.getters.getChartType();
+    merge: function(options) {
         let filteredOptions = {};
         options.forEach(option => {
             let content = option.content;
