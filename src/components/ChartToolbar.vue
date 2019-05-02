@@ -11,17 +11,15 @@
                     </BInputGroup>
                     <BInputGroup prepend="sort">
                         <BFormSelect
+                        label="data" 
+                        v-model="storeSortedData"
+                        :options="storeDimensions"
+                        />
+                        <BFormSelect
                         label="type" 
                         v-model="storeSortType"
-                        >
-                            <option 
-                            v-for="(sortType, key) in getSortTypes()" 
-                            :key="key"
-                            :value="sortType"
-                            >
-                                {{ sortType }}
-                            </option>
-                        </BFormSelect>
+                        :options="getSortTypes()"
+                        />
                     </BInputGroup>
                     <hr/>
                     <BCard 
@@ -122,28 +120,18 @@
                                         </option>
                                     </BFormSelect>
                                 </BInputGroup>
-                                <BCard 
-                                no-body
+                                <BInputGroup
                                 v-for="(axis, index) in entry.axis"
                                 :key="index"
+                                :prepend="axis.id"
                                 >
-                                    <BCardHeader header-tag="header" role="tab">
-                                        <BButton v-b-toggle="'axis-accordion-' + index" block variant="info">
-                                            {{ axis.id }}
-                                        </BButton>
-                                    </BCardHeader>
-                                    <BCollapse :id="'axis-accordion-' + index" accordion="axisToolbarMenu">
-                                        <BCardBody>
-                                            <BFormCheckboxGroup
-                                            :id="axis.id"
-                                            v-model="axis.dimensions"
-                                            :options="storeDimensions"
-                                            class="multiselect"
-                                            stacked
-                                            />
-                                        </BCardBody>
-                                    </BCollapse>
-                                </BCard>
+                                    <BFormSelect
+                                    label="axis bind" 
+                                    v-model="axis.dimension"
+                                    :options="storeDimensions"
+                                    />
+                                </BInputGroup>
+
 
                                 <!--<BInputGroup prepend="sort">
                                     <BFormSelect

@@ -49,16 +49,31 @@ const defaultData = {
     },
     series: [
         {
-            name: "installed apps",
+            name: "installed apps by person",
             type: chartTypes.bar2d,
             axis: [
                 {
                     id: 'x1',
-                    dimensions: ['name']
+                    dimension: 'name'
                 },
                 {
                     id: 'y1',
-                    dimensions: ['installed apps']
+                    dimension: 'installed apps'
+                },
+            ],
+            show: true
+        },
+        {
+            name: "age by person",
+            type: chartTypes.bar2d,
+            axis: [
+                {
+                    id: 'x1',
+                    dimension: 'name'
+                },
+                {
+                    id: 'y1',
+                    dimension: 'age'
                 },
             ],
             show: true

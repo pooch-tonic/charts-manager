@@ -13,7 +13,7 @@ export default new Vuex.Store({
         chartConfig: {
             chartSystem: chartSystemTypes.cartesian2d,
             sortType: 'none',
-            sortedData: null,
+            sortedData: 'name'
         },
         data: _.clone(defaultData)
     },

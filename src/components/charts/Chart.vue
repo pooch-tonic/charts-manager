@@ -8,6 +8,8 @@ import echarts from 'echarts'
 import { mapState, mapGetters} from 'vuex'
 import merger from '@/util/chart-options-merger'
 import mapper from '@/util/chart-data-mapper'
+import sorter from '@/util/chart-data-sorter'
+import lodash from 'lodash'
 
 export default {
     name: 'Chart',
@@ -49,15 +51,12 @@ export default {
             let cs = vm.getChartSystem();
             let st = vm.getSortType();
             let sd = vm.getSortedData();
-            let data = vm.getData();
-            
-            console.log(this.$store);
-
+            let data = _.cloneDeep(vm.getData());
             let options = merger.merge(cs.allowedParameters);
-            options = mapper.mapData(options, data, cs.name);
+            data.dataset = sorter.sort(data.dataset, sd, st);
+            options = mapper.mapData(options, data, cs);
             // DEBUG console.log("STORE: ", cc.chartType);
             // DEBUG console.log("MERGED: ",options);
-            console.log(options);
             myChart.setOption(options);
         },
     },

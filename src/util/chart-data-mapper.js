@@ -81,33 +81,33 @@ const getSortedData = function(dataset) {
     return dataset;
 }*/
 
-const bindByChartSystem = function(entry, chartSystemName) {
+const bindByChartSystem = function(entry, chartSystem, mainCategoryName) {
     let entryToInsert = {};
     let encodeToInsert = {};
+    let categoryAxis = null;
 
-    switch (chartSystemName) {
-        case 'cartesian2d':
-            encodeToInsert['x'] = entry.axis[0].dimensions;
-            encodeToInsert['y'] = entry.axis[1].dimensions;
-        break;
-        case 'polar':
-            encodeToInsert['angle'] = entry.axis[0].dimensions;
-            encodeToInsert['radius'] = entry.axis[1].dimensions;
-        break;
-        default:
-        break;
-    }
+    chartSystem.allowedAxisTypes.forEach((axis, index) => {
+        encodeToInsert[axis.name] = entry.axis[index].dimension;
+
+        // NOTE: TEMPORARY MAPPING
+        if (entry.axis[index].dimension === mainCategoryName) {
+            categoryAxis = axis.name + 'Axis';
+        }
+    });
+
     entryToInsert['type'] = entry.type.type;
     entryToInsert['encode'] = encodeToInsert;
-    return entryToInsert;
+    return {entryToInsert: entryToInsert, categoryAxis: categoryAxis};
 }
 
 export default {
-    mapData: function(options, data, chartSystemName) {
+    mapData: function(options, data, chartSystem) {
         let datasetToInsert = {};
         let seriesToInsert = [];
         let dimensions = data.dataset.dimensions;
         let mainCategoryName = dimensions[0].name;
+        let categoryAxis = null;
+
 
         datasetToInsert['source'] = data.dataset.source;
         datasetToInsert['dimensions'] = _.map(dimensions, 'name');
@@ -116,11 +116,23 @@ export default {
 
         data.series.forEach(entry => {
             if (entry.show) {
-                seriesToInsert.push(bindByChartSystem(entry, chartSystemName));
+                let result = bindByChartSystem(entry, chartSystem, mainCategoryName);
+
+                if (result.categoryAxis !== null) {
+                    categoryAxis = result.categoryAxis;
+                }
+                
+                seriesToInsert.push(result.entryToInsert);
             }
         });
 
+        if (categoryAxis !== null) {
+            options[categoryAxis] = _.assign(options[categoryAxis], {type: 'category'});
+        }
+        
         options.series = seriesToInsert;
+
+        console.log('OPTIONS', options);
         return options;
     }
 }

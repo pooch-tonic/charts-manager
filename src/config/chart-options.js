@@ -82,10 +82,6 @@ const chartParameters = {
             max: {
                 value: null,
                 type: types.number
-            },
-            type: {
-                value: 'category',
-                type: types.text
             }
         }
     },
