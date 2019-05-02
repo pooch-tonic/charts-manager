@@ -7,9 +7,11 @@
 import echarts from 'echarts'
 import { mapState, mapGetters} from 'vuex'
 import merger from '@/util/chart-options-merger'
-import mapper from '@/util/chart-data-mapper'
+import datasetMapper from '@/util/chart-dataset-mapper'
+import dataMapper from '@/util/chart-data-mapper'
 import sorter from '@/util/chart-data-sorter'
 import lodash from 'lodash'
+import { defaultData } from '@/config/chart-data-alt.js'
 
 export default {
     name: 'Chart',
@@ -17,19 +19,15 @@ export default {
         getChartSystemUpdates() {
             return this.getChartSystem()
         },
-        getSortedDataUpdates() {
-            return this.getSortedData()
-        },
-        getSortTypeUpdates() {
-            return this.getSortType()
+        getSortUpdates() {
+            return this.getSort()
         },
         getDataUpdates() {
             return this.getData()
         },
         ...mapGetters([
             'getChartSystem',
-            'getSortedData',
-            'getSortType',
+            'getSort',
             'getData'
         ]),
     },
@@ -41,6 +39,9 @@ export default {
             this.dispose();
             this.drawLine();
         },
+        /*throttledRedraw() {
+            _.throttle(this.redraw, 500);
+        },*/
         dispose() {
             // DEBUG console.log('DISPOSE');
             echarts.dispose(document.getElementById('current-chart'));
@@ -49,12 +50,13 @@ export default {
             let myChart = echarts.init(document.getElementById('current-chart'));
             let vm = this;
             let cs = vm.getChartSystem();
-            let st = vm.getSortType();
-            let sd = vm.getSortedData();
+            let st = vm.getSort();
             let data = _.cloneDeep(vm.getData());
             let options = merger.merge(cs.allowedParameters);
-            data.dataset = sorter.sort(data.dataset, sd, st);
-            options = mapper.mapData(options, data, cs);
+            let optionsAlt = _.cloneDeep(options);
+            data.dataset = sorter.sort(data.dataset, st);
+            options = datasetMapper.mapData(options, data, cs);
+            //optionsAlt = dataMapper.mapData(optionsAlt, defaultData, cs);
             // DEBUG console.log("STORE: ", cc.chartType);
             // DEBUG console.log("MERGED: ",options);
             myChart.setOption(options);
@@ -67,15 +69,11 @@ export default {
             },
             deep: true,
         },
-        getSortedDataUpdates: {
-            handler: function(getSortedDataUpdates, oldGetSortedDataUpdates) {
+        getSortUpdates: {
+            handler: function(getSortUpdates, oldGetSortUpdates) {
                 this.redraw();
-            }
-        },
-        getSortTypeUpdates: {
-            handler: function(getSortTypeUpdates, oldGetSortTypeUpdates) {
-                this.redraw();
-            }
+            },
+            deep: true,
         },
         getDataUpdates: {
             handler: function(getDataUpdates, oldGetDataUpdates) {

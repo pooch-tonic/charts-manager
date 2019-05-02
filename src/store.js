@@ -12,8 +12,16 @@ export default new Vuex.Store({
         appTitle: 'Charts Manager',
         chartConfig: {
             chartSystem: chartSystemTypes.cartesian2d,
-            sortType: 'none',
-            sortedData: 'name'
+            sort: {
+                primary: {
+                    type: null,
+                    dataName: 'name'
+                },
+                secondary: {
+                    type: null,
+                    dataName: 'installed apps'
+                }
+            }
         },
         data: _.clone(defaultData)
     },
@@ -33,35 +41,36 @@ export default new Vuex.Store({
                 return state.data
             }
         },
-        getSortedData: function(state) {
+        getSort: function(state) {
             return () => {
-                return state.chartConfig.sortedData
-            }
-        },
-        getSortType: function(state) {
-            return () => {
-                return state.chartConfig.sortType
+                return state.chartConfig.sort
             }
         }
     },
     mutations: {
-        UPDATE_SORT_TYPE: function(state, newSortType) {
-            state.chartConfig.sortType = newSortType;
-        },
-        UPDATE_SORTED_DATA: function(state, newSortedData) {
-            state.chartConfig.sortedData = newSortedData;
+        UPDATE_SORT: function(state, newSort) {
+            Vue.set(state.series, 'sort', newSort)
         },
         UPDATE_CHART_SYSTEM: function(state, newChartSystem) {
-            state.chartConfig.chartSystem = newChartSystem;
-        },
-        UPDATE_DATA_SORT: function(state, newDataSort) {
-            state.dataSort = newDataSort;
+            state.chartConfig.chartSystem = newChartSystem
         },
         UPDATE_SERIES: function(state, newSeries) {
-            Vue.set(state.series, 'series', newSeries);
+            Vue.set(state.series, 'series', newSeries)
+        },
+        CREATE_ENTRY: function(state, newEntry) {
+            state.data.series.push(newEntry)
+        },
+        CREATE_AXIS: function(state, newAxis) {
+            state.data.currentAxis.push(newAxis)
         }
     },
     actions: {
-
+        createEntry({commit}, newEntry) {
+            commit('CREATE_ENTRY', newEntry)
+        },
+        createAxis({commit}, newAxis) {
+            // TODO no same names
+            commit('CREATE_AXIS', newAxis)
+        }
     }
 })

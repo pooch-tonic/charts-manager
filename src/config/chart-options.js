@@ -10,27 +10,35 @@ const types = {
 }
 
 const sortTypes = {
-    none: 'none',
-    ascendant: 'ascendant',
-    descendant: 'descendant',
-    alphabetical: 'alphabetical'
+    none: {
+        value: null,
+        text: 'none'
+    },
+    ascendant: {
+        value: 'asc',
+        text: 'ascendant'
+    },
+    descendant: {
+        value: 'desc',
+        text: 'descendant'
+    }
 }
 
 const axisTypes = {
     x: {
-        name: 'x',
+        name: 'xAxis',
         displayName: 'x axis'
     },
     y: {
-        name: 'y',
+        name: 'yAxis',
         displayName: 'y axis'
     },
     angle: {
-        name: 'angle',
+        name: 'angleAxis',
         displayName: 'angle axis'
     },
     radius: {
-        name: 'radius',
+        name: 'radiusAxis',
         displayName: 'radius axis'
     }
 }
@@ -71,7 +79,7 @@ const chartParameters = {
             }
         }
     },
-    xAxis: {
+    xAxis: [{
         name: 'xAxis',
         displayName: 'x axis',
         content: {
@@ -84,8 +92,8 @@ const chartParameters = {
                 type: types.number
             }
         }
-    },
-    yAxis: {
+    }],
+    yAxis: [{
         name: 'yAxis',
         displayName: 'y axis',
         content: {
@@ -98,7 +106,7 @@ const chartParameters = {
                 type: types.number
             }
         }
-    },
+    }],
     polar: {
         name: 'polar',
         displayName: 'polar',
