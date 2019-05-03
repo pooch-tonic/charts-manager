@@ -49,16 +49,37 @@ const defaultData = {
     },
     series: [
         {
-            name: "installed apps by person",
-            type: chartTypes.bar2d,
-            dimension: 'installed apps',
-            show: true
+            name: "screen time (hrs)",
+            type: chartTypes.line,
+            dimension: 'screen time in hrs',
+            min: 0,
+            max: 15,
+            position: 'left',
+            show: true,
+            xAxisIndex: 0,
+            yAxisIndex: 0
         },
         {
-            name: "age by person",
+            name: "age",
             type: chartTypes.bar2d,
             dimension: 'age',
-            show: true
+            min: 0,
+            max: 100,
+            position: 'right',
+            show: true,
+            xAxisIndex: 0,
+            yAxisIndex: 1
+        },
+        {
+            name: "apps",
+            type: chartTypes.bar2d,
+            dimension: 'installed apps',
+            min: 0,
+            max: 100,
+            position: 'right',
+            show: true,
+            xAxisIndex: 0,
+            yAxisIndex: 2
         }
     ],
     sort: sortTypes.none,

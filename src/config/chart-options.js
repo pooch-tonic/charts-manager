@@ -76,6 +76,10 @@ const chartParameters = {
             top: {
                 value: 100,
                 type: types.number
+            },
+            right: {
+                value: '20%',
+                type: types.number
             }
         }
     },

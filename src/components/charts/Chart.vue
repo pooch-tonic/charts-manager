@@ -56,10 +56,10 @@ export default {
             let optionsAlt = _.cloneDeep(options);
             data.dataset = sorter.sort(data.dataset, st);
             options = datasetMapper.mapData(options, data, cs);
-            //optionsAlt = dataMapper.mapData(optionsAlt, defaultData, cs);
+            optionsAlt = dataMapper.mapData(optionsAlt, defaultData, cs);
             // DEBUG console.log("STORE: ", cc.chartType);
             // DEBUG console.log("MERGED: ",options);
-            myChart.setOption(options);
+            myChart.setOption(optionsAlt);
         },
     },
     watch: {

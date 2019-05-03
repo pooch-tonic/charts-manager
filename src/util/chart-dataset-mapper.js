@@ -13,7 +13,7 @@ const bindByChartSystem = function(entry, chartSystem, mainCategoryName) {
     let categoryAxis = null;
 
     chartSystem.allowedAxisTypes.forEach((axis, index) => {
-        encodeToInsert[axis.name] = entry.axis[index].dimension;
+        encodeToInsert[_.replace(axis.name, 'Axis', '')] = entry.axis[index].dimension;
 
         // NOTE: TEMPORARY MAPPING
         if (entry.axis[index].dimension === mainCategoryName) {
@@ -45,7 +45,7 @@ export default {
                 let result = bindByChartSystem(entry, chartSystem, mainCategoryName);
 
                 if (result.categoryAxis !== null) {
-                    categoryAxis = result.categoryAxis;
+                    categoryAxis = _.replace(result.categoryAxis, 'Axis', '');
                 }
                 
                 seriesToInsert.push(result.entryToInsert);
@@ -53,14 +53,12 @@ export default {
         });
 
         if (categoryAxis !== null) {
-            options[categoryAxis].forEach(item => (
+            options[categoryAxis + 'Axis'].forEach(item => (
                 _.assign(item, {type: 'category'})
             ))
         }
         
         options.series = seriesToInsert;
-
-        console.log('OPTIONS', options);
         return options;
     }
 }

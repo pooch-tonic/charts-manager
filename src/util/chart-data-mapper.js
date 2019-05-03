@@ -44,24 +44,40 @@ export default {
     mapData: function(options, data, chartSystem) {
         let seriesToInsert = [];
         let dataset = data.dataset;
-        let series = data.series
-        console.log(dataset);
+        let series = data.series;
         let mainAxis = _.find(data.currentAxis, {isMain: true});
-        let mainArray = extractColumn(dataset.source, 0)
+        let valueAxis = _.find(data.currentAxis, {isMain: false});
+        let valueAxisToInsert = [];
+        let mainArray = extractColumn(dataset.source, 0);
 
-        _.assign(options[mainAxis.base.name][0], {type: 'category', data: mainArray});
+        _.assign(options[mainAxis.base.name][0], {
+            type: 'category', 
+            data: mainArray
+        });
         series.forEach((entry, index) => {
             if (entry.show) {
-                let entryToInsert = {};
-                entryToInsert['name'] = entry.name;
-                entryToInsert['type'] = entry.type.type;
-                entryToInsert['data'] = extractColumn(dataset.source, _.findIndex(dataset.dimensions, entry.dimension));
-                seriesToInsert.push(entryToInsert);
+                let entryData = extractColumn(dataset.source, _.findIndex(dataset.dimensions, { name: entry.dimension }))
+                seriesToInsert.push({
+                    name: entry.name,
+                    type: entry.type.type,
+                    data: entryData,
+                    xAxisIndex: entry.xAxisIndex,
+                    yAxisIndex: entry.yAxisIndex
+                });
+                valueAxisToInsert.push({
+                    type: 'value',
+                    name: entry.name,
+                    min: entry.min,
+                    max: entry.max,
+                    offset: (entry.yAxisIndex !== 0 ? ((entry.yAxisIndex - 1) * 80) : 0),
+                    position: entry.position,
+                    axisLine: {lineStyle: {}}
+                });
+                console.log(valueAxisToInsert)
             }
         })
-
+        options[valueAxis.base.name] = valueAxisToInsert;
         options.series = seriesToInsert;
-        console.log(dataset);
         console.log('OPTIONS-ALT', options);
         return options;
     }
