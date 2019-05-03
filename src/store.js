@@ -2,7 +2,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { chartSystemTypes } from '@/config/chart-options'
-import { defaultData } from '@/config/chart-data'
+import { defaultData } from '@/config/chart-data-alt'
 import lodash from 'lodash'
 
 Vue.use(Vuex)
@@ -48,20 +48,28 @@ export default new Vuex.Store({
         }
     },
     mutations: {
-        UPDATE_SORT: function(state, newSort) {
-            Vue.set(state.series, 'sort', newSort)
-        },
         UPDATE_CHART_SYSTEM: function(state, newChartSystem) {
             state.chartConfig.chartSystem = newChartSystem
         },
-        UPDATE_SERIES: function(state, newSeries) {
-            Vue.set(state.series, 'series', newSeries)
+        UPDATE_SORT: function(state, newChartSystem) {
+
         },
         CREATE_ENTRY: function(state, newEntry) {
             state.data.series.push(newEntry)
         },
         CREATE_AXIS: function(state, newAxis) {
             state.data.currentAxis.push(newAxis)
+        },
+        DELETE_ENTRY: function(state, entryToDelete) {
+            let data = _.cloneDeep(state.data)
+            let axisIndex = entryToDelete.valueAxisIndex  
+            data.series = _.pull(data.series, entryToDelete)
+            console.log('WITHOUT', data.series)
+            Vue.set(state, 'data', data)
+            console.log(state)
+        },
+        DELETE_AXIS: function(state, axisData) {
+            Vue.set(state.data, 'series', _.without(state.data.series, axisDataToDelete))
         }
     },
     actions: {
@@ -71,6 +79,12 @@ export default new Vuex.Store({
         createAxis({commit}, newAxis) {
             // TODO no same names
             commit('CREATE_AXIS', newAxis)
+        },
+        deleteEntry({commit}, entryToDelete) {
+            commit('DELETE_ENTRY', entryToDelete)
+        },
+        deleteAxis({commit}, axisData) {
+            commit('DELETE_AXIS', axisData)
         }
     }
 })

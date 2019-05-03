@@ -54,10 +54,9 @@ const defaultData = {
             dimension: 'screen time in hrs',
             min: 0,
             max: 15,
-            position: 'left',
             show: true,
-            xAxisIndex: 0,
-            yAxisIndex: 0
+            smooth: 0,
+            valueAxisIndex: 0
         },
         {
             name: "age",
@@ -65,36 +64,56 @@ const defaultData = {
             dimension: 'age',
             min: 0,
             max: 100,
-            position: 'right',
             show: true,
-            xAxisIndex: 0,
-            yAxisIndex: 1
+            smooth: 0,
+            valueAxisIndex: 1
         },
         {
             name: "apps",
             type: chartTypes.bar2d,
             dimension: 'installed apps',
             min: 0,
-            max: 100,
-            position: 'right',
+            max: 50,
             show: true,
-            xAxisIndex: 0,
-            yAxisIndex: 2
+            smooth: 0,
+            valueAxisIndex: 2
         }
     ],
     sort: sortTypes.none,
-    currentAxis: [
-        {
+    currentAxis: {
+        xAxis: {
             base: axisTypes.x,
-            name: 'x1',
+            axisList: [
+                {
+                    axisIndex: 0,
+                    name: 'x1',
+                    position: 'bottom'
+                }
+            ],
             isMain: true
         },
-        {
+        yAxis: {
             base: axisTypes.y,
-            name: 'y1',
+            axisList: [
+                {
+                    axisIndex: 0,
+                    name: 'y1',
+                    position: 'left'
+                },
+                {
+                    axisIndex: 1,
+                    name: 'y2',
+                    position: 'right'
+                },
+                {
+                    axisIndex: 2,
+                    name: 'y3',
+                    position: 'right'
+                }
+            ],
             isMain: false
         }
-    ]
+    }
 }
 
 export {

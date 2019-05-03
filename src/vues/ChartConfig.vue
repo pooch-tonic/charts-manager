@@ -49,6 +49,7 @@ a {
 #chart-parameters {
     box-shadow: -3px 0 5px -2px #eaeaea;
     height: 100%;
+    overflow-y: scroll;
     width: 480px;
 }
 </style>

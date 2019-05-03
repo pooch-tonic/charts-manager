@@ -51,26 +51,32 @@ export default {
         let mainArray = extractColumn(dataset.source, 0);
 
         _.assign(options[mainAxis.base.name][0], {
-            type: 'category', 
+            type: 'category',
             data: mainArray
         });
         series.forEach((entry, index) => {
             if (entry.show) {
                 let entryData = extractColumn(dataset.source, _.findIndex(dataset.dimensions, { name: entry.dimension }))
-                seriesToInsert.push({
+                let entryToPush = {
                     name: entry.name,
                     type: entry.type.type,
-                    data: entryData,
-                    xAxisIndex: entry.xAxisIndex,
-                    yAxisIndex: entry.yAxisIndex
-                });
+                    data: entryData
+                };
+                entryToPush[valueAxis.base.name + 'Index'] = entry.valueAxisIndex
+
+                // enable smoothing for line series only
+                if (entry.smooth > 0) {
+                    entryToPush['smooth'] = entry.smooth / 100;
+                }
+
+                seriesToInsert.push(entryToPush);
                 valueAxisToInsert.push({
                     type: 'value',
                     name: entry.name,
                     min: entry.min,
                     max: entry.max,
-                    offset: (entry.yAxisIndex !== 0 ? ((entry.yAxisIndex - 1) * 80) : 0),
-                    position: entry.position,
+                    offset: (entry.valueAxisIndex !== 0 ? ((entry.valueAxisIndex - 1) * 80) : 0),
+                    position: _.get(data.currentAxis[valueAxis.base.name], 'axisList')[entry.valueAxisIndex].position,
                     axisLine: {lineStyle: {}}
                 });
                 console.log(valueAxisToInsert)

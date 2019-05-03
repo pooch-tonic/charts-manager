@@ -2,7 +2,7 @@
     <div id="app">
         <header id="app-header">
             <div id="app-logo-wrapper">
-                <img id="app-logo" src="./assets/logo.png">
+                <img id="app-logo" type="image/jpg" src="https://pbs.twimg.com/profile_images/871642801225650176/aSzYQa43.jpg">
             </div>
             <h1 id="app-title">{{ appTitle }}</h1>
             <div id="app-navbar">
@@ -122,7 +122,9 @@ body, html {
 
 #app-contents {
     flex: 1;
+    height: 100%;
     padding-top: 90px;
+    position: fixed;
     width: 100%;
     z-index: 40;
 }

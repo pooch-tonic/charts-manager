@@ -3,10 +3,12 @@
 const types = {
     boolean: 'boolean',
     number: 'number',
+    percentage: 'percentage',
     text: 'text',
     array: 'array',
     color: 'color',
-    select: 'select'
+    select: 'select',
+    object: 'object'
 }
 
 const sortTypes = {
@@ -27,11 +29,19 @@ const sortTypes = {
 const axisTypes = {
     x: {
         name: 'xAxis',
-        displayName: 'x axis'
+        displayName: 'x axis',
+        positions: [
+            'bottom',
+            'top'
+        ]
     },
     y: {
         name: 'yAxis',
-        displayName: 'y axis'
+        displayName: 'y axis',
+        positions: [
+            'left',
+            'right'
+        ]
     },
     angle: {
         name: 'angleAxis',
@@ -62,9 +72,9 @@ const chartParameters = {
                 value: 'left',
                 type: types.select,
                 options: [
-                    { value: 'left', text: 'left'},
-                    { value: 'center', text: 'center'},
-                    { value: 'right', text: 'right'}
+                    {value: 'left', text: 'left'},
+                    {value: 'center', text: 'center'},
+                    {value: 'right', text: 'right'}
                 ]
             }
         }
@@ -75,11 +85,19 @@ const chartParameters = {
         content: {
             top: {
                 value: 100,
-                type: types.number
+                type: types.percentage
             },
             right: {
-                value: '20%',
-                type: types.number
+                value: 50,
+                type: types.percentage
+            },
+            left: {
+                value: 50,
+                type: types.percentage
+            },
+            bottom: {
+                value: 50,
+                type: types.percentage
             }
         }
     },
@@ -149,7 +167,19 @@ const chartParameters = {
         name: 'tooltip',
         displayName: 'tooltip',
         content: {
-
+            trigger: {
+                value: 'axis',
+                type: types.select,
+                options: [
+                    {value: 'axis', text: 'axis'},
+                    {value: 'item', text: 'item'},
+                    {value: 'none', text: 'none'}
+                ]
+            }
+            /*axisPointer: {
+                value: {type: 'shadow'},
+                type: types.object
+            }*/
         }
     }
 };
