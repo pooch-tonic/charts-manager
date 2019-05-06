@@ -70,16 +70,19 @@ export default {
                 }
 
                 seriesToInsert.push(entryToPush);
-                valueAxisToInsert.push({
+                let valueAxisItemToPush = {
                     type: 'value',
                     name: entry.name,
                     min: entry.min,
                     max: entry.max,
-                    offset: (entry.valueAxisIndex !== 0 ? ((entry.valueAxisIndex - 1) * 80) : 0),
+                    // NOTE this condition could be optimized
+                    offset: (entry.valueAxisIndex !== 0 ? ((entry.valueAxisIndex - 1) * valueAxis.spacing) : 0),
                     position: _.get(data.currentAxis[valueAxis.base.name], 'axisList')[entry.valueAxisIndex].position,
                     axisLine: {lineStyle: {}}
-                });
-                console.log(valueAxisToInsert)
+                }
+                options.grid[valueAxisItemToPush.position] += valueAxis.spacing;
+                valueAxisToInsert.push(valueAxisItemToPush);
+                console.log(options.grid);
             }
         })
         options[valueAxis.base.name] = valueAxisToInsert;

@@ -122,7 +122,12 @@
                                         </BInputGroup>
                                     </BCol>
                                     <BCol cols="3">
-                                        <BButton block variant="danger" @click="handleEntryDeletion(entry)">
+                                        <BButton 
+                                        block 
+                                        variant="danger" 
+                                        @click="handleEntryDeletion(entry)"
+                                        v-if="entry.valueAxisIndex > 0"
+                                        >
                                             delete
                                         </BButton>
                                     </BCol>
@@ -358,73 +363,134 @@
                     <BCollapse :id="'axis-accordion-' + index" accordion="axisToolbarMenu">
                         <BCardBody>
                             <BContainer>
-                                <BRow v-for="(axis, index) in axisType.axisList" :key="index" class="axis-inner-card-row">
+                                <BRow>
+                                    <BCol>
+                                        <BInputGroup prepend="spacing (px)">
+                                            <BInput
+                                            type="range"
+                                            min="0"
+                                            max="200"
+                                            v-model.number="axisType.spacing"
+                                            />
+                                        </BInputGroup>
+                                        <br/>
+                                    </BCol>
+                                </BRow>
+                                <BRow v-for="(axis, index) in axisType.axisList" :key="index" class="space-bottom">
                                     <BCol>
                                         <BCard no-body>
-                                            <BCardHeader>
-
+                                            <BCardHeader header-tag="header" role="tab">
+                                                {{ axis.name }}
                                             </BCardHeader>
                                             <BCardBody>
-
+                                                <BContainer>
+                                                    <BRow>
+                                                        <BCol offset="9">
+                                                            <BButton 
+                                                            block 
+                                                            variant="danger" 
+                                                            @click="handleAxisDeletion(axisType.base, axis)"
+                                                            v-if="axis.axisIndex > 0"
+                                                            >
+                                                                delete
+                                                            </BButton>
+                                                        </BCol>
+                                                    </BRow>
+                                                    <BRow>
+                                                        <BCol>
+                                                            <BInputGroup prepend="name">
+                                                                <BFormInput
+                                                                type="text"
+                                                                v-model="axis.name"
+                                                                />
+                                                            </BInputGroup>
+                                                        </BCol>
+                                                    </BRow>
+                                                    <BRow>
+                                                        <BCol>
+                                                            <BInputGroup prepend="order">
+                                                                <BFormSelect
+                                                                label="id" 
+                                                                v-model="axis.axisIndex"
+                                                                >
+                                                                    <option
+                                                                    v-for="id in axisType.axisList.length"
+                                                                    :key="id"
+                                                                    :value="id - 1"
+                                                                    >
+                                                                        {{ id }}
+                                                                    </option>
+                                                                </BFormSelect>
+                                                            </BInputGroup>
+                                                        </BCol>
+                                                    </BRow>
+                                                    <BRow>
+                                                        <BCol>
+                                                            <BInputGroup prepend="position">
+                                                                <BFormSelect
+                                                                label="position" 
+                                                                v-model="axis.position"
+                                                                :options="axisType.base.positions"
+                                                                />
+                                                            </BInputGroup>
+                                                        </BCol>
+                                                    </BRow>
+                                                </BContainer>
                                             </BCardBody>
+                                        </BCard>
+                                    </BCol>
+                                </BRow>
+                                <BRow>
+                                    <BCol>
+                                        <BCard 
+                                        no-body
+                                        bg-variant="light"
+                                        >
+                                            <div v-if="!createAxisForm" @click="handleAxisCreationStart(axisType)" variant="light">
+                                                <BButton block variant="light">
+                                                    +
+                                                </BButton>
+                                            </div>
+                                            <div v-else>
+                                                <BCardHeader>
+                                                    <BButtonToolbar justify>
+                                                        <BButtonGroup>
+                                                            <BButton disabled variant="default">
+                                                                Add a new axis
+                                                            </BButton>
+                                                        </BButtonGroup>
+                                                        <BButtonGroup>
+                                                            <BButton @click="handleAxisCreationCancel">
+                                                                x
+                                                            </BButton>
+                                                        </BButtonGroup>
+                                                    </BButtonToolbar>
+                                                </BCardHeader>
+                                                <BCardBody>
+                                                    <BContainer>
+                                                        <BRow>
+                                                            <BCol>
+                                                                <BInputGroup prepend="name">
+                                                                    <BInput
+                                                                    label="name" 
+                                                                    type="text"
+                                                                    v-model.lazy="createAxisForm.name"
+                                                                    />
+                                                                </BInputGroup>                                       
+                                                            </BCol>
+                                                        </BRow>
+                                                    </BContainer>
+                                                </BCardBody>
+                                                <BCardFooter>
+                                                    <BButton @click="handleAxisCreationSubmit">Submit</BButton>
+                                                </BCardFooter>
+                                            </div>
                                         </BCard>
                                     </BCol>
                                 </BRow>          
                             </BContainer>
                         </BCardBody>
                     </BCollapse>
-                </BCard>
-                <BCard 
-                no-body
-                bg-variant="light"
-                >
-                    <div v-if="!createAxisForm" @click="this.handleAxisCreationStart" variant="light">
-                        <BButton block variant="light">
-                            +
-                        </BButton>
-                    </div>
-                    <div v-else>
-                        <BCardHeader>
-                            <BButtonToolbar justify>
-                                <BButtonGroup>
-                                    <BButton disabled variant="default">
-                                        Add a new axis
-                                    </BButton>
-                                </BButtonGroup>
-                                <BButtonGroup>
-                                    <BButton @click="this.handleAxisCreationCancel">
-                                        x
-                                    </BButton>
-                                </BButtonGroup>
-                            </BButtonToolbar>
-                        </BCardHeader>
-                        <BCardBody>
-                            <BInputGroup prepend="name">
-                                <BInput
-                                label="name" 
-                                type="text"
-                                v-model.lazy="createAxisForm.name"
-                                />
-                            </BInputGroup>
-                            <BInputGroup prepend="base">
-                                <BFormSelect
-                                label="axis base" 
-                                v-model="createAxisForm.base"
-                                >
-                                    <option
-                                    v-for="(axisType, index) in storeChartSystem.allowedAxisTypes"
-                                    :key="index"
-                                    :value="axisType"
-                                    >
-                                        {{ axisType.displayName }}
-                                    </option>
-                                </BFormSelect>
-                            </BInputGroup> 
-                        </BCardBody>
-                        <BCardFooter>
-                            <BButton @click="this.handleAxisCreationSubmit">Submit</BButton>
-                        </BCardFooter>
-                    </div>
                 </BCard>
             </div>
         </BTab>
@@ -546,13 +612,12 @@ export default {
             this.handleEntryCreationCancel();
         },
         handleEntryDeletion(entryToDelete) {
-            console.log(entryToDelete);
             this.deleteEntry(entryToDelete);
         },
-        handleAxisCreationStart() {
+        handleAxisCreationStart(baseAxisType) {
             this.createAxisForm = {
-                base: store.getters.getChartSystem().allowedAxisTypes[0],
                 name: '',
+                base: baseAxisType.base
             };
         },
         handleAxisCreationCancel() {
@@ -562,8 +627,8 @@ export default {
             this.createAxis(this.createAxisForm);
             this.handleAxisCreationCancel();
         },
-        handleAxisDeletion(axisToDelete) {
-            this.deleteAxis(axisToDelete);
+        handleAxisDeletion(axisType, axisToDelete) {
+            this.deleteAxis({axisType, axisToDelete});
         }
     }
 }
@@ -596,7 +661,7 @@ form, .tablist, .tab-pane, .tab-content {
     padding-left: 0;
     padding-right: 0;
 }
-.axis-inner-card-row {
+.space-bottom {
     margin-bottom: 8px;
 }
 </style>

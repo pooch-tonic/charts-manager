@@ -82,6 +82,7 @@ const defaultData = {
     sort: sortTypes.none,
     currentAxis: {
         xAxis: {
+            spacing: 80,
             base: axisTypes.x,
             axisList: [
                 {
@@ -93,6 +94,7 @@ const defaultData = {
             isMain: true
         },
         yAxis: {
+            spacing: 80,
             base: axisTypes.y,
             axisList: [
                 {
