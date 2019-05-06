@@ -51,6 +51,11 @@ export default new Vuex.Store({
         UPDATE_CHART_SYSTEM: function(state, newChartSystem) {
             state.data.currentAxis.primaryAxis.base = newChartSystem.allowedAxisTypes[0]
             state.data.currentAxis.secondaryAxis.base = newChartSystem.allowedAxisTypes[1]
+            state.data.series.forEach(entry => {
+                if (_.findIndex(newChartSystem.allowedChartTypes, entry.type) < 0) {
+                    entry.type = newChartSystem.allowedChartTypes[0]
+                }
+            })
             state.chartConfig.chartSystem = newChartSystem
         },
         CREATE_CATEGORY: function(state, newCategory) {

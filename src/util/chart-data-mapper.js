@@ -73,9 +73,6 @@ export default {
         })
 
         series.forEach(entry => {
-            if (_.findIndex(chartSystem.allowedChartTypes, entry.type) < 0) {
-                entry.type = chartSystem.allowedChartTypes[0]
-            }
 
             if (entry.show) {
                 let entryData = extractColumn(dataset.source, _.findIndex(dataset.dimensions, { name: entry.dimension }))
