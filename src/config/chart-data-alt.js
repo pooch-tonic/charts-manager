@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { chartTypes, sortTypes, axisTypes } from './chart-options'
+import { chartTypes, sortTypes, axisTypes, dimensionTypes } from './chart-options'
 
 const defaultData = {
     title: "Installed apps",
@@ -7,15 +7,19 @@ const defaultData = {
         dimensions: [
             {
                 name: "name",
+                type: dimensionTypes.category
             },
             {
                 name: "installed apps",
+                type: dimensionTypes.value
             },
             {
                 name: "age",
+                type: dimensionTypes.value
             },
             {
                 name: "screen time in hrs",
+                type: dimensionTypes.value
             }
         ],
         source: [

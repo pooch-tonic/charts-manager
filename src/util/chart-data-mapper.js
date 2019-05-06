@@ -7,23 +7,11 @@
 import lodash from 'lodash';
 import { defaultSeries } from '@/config/chart-data'
 
-const bindByChartSystem = function(entry, chartSystem, mainDimensionName) {
-    let entryToInsert = {};
-    let encodeToInsert = {};
-    let mainAxis = null;
-
-    chartSystem.allowedAxisTypes.forEach((axis, index) => {
-        encodeToInsert[axis.name] = entry.axis[index].dimension;
-
-        // NOTE: TEMPORARY MAPPING
-        if (entry.axis[index].dimension === mainDimensionName) {
-            mainAxis = axis.name + 'Axis';
-        }
-    });
-
-    entryToInsert['type'] = entry.type.type;
-    entryToInsert['encode'] = encodeToInsert;
-    return {entryToInsert: entryToInsert, mainAxis: mainAxis};
+const calculateOffset = function(axis, axisList, spacing) {
+    let targetPosition = axis.position
+    let relatedAxisList = _.filter(axisList, {position: targetPosition})
+    relatedAxisList = _.orderBy(relatedAxisList, 'axisIndex')
+    return {offset: _.indexOf(relatedAxisList, axis) * spacing, position: targetPosition}
 }
 
 const extractColumn = function(baseArray, extractIndex) {
@@ -49,6 +37,12 @@ export default {
         let valueAxis = _.find(data.currentAxis, {isMain: false});
         let valueAxisToInsert = [];
         let mainArray = extractColumn(dataset.source, 0);
+        let gridAdditionalValues = {
+            top: 0,
+            bottom: 0,
+            right: 0,
+            left: 0
+        }
 
         _.assign(options[mainAxis.base.name][0], {
             type: 'category',
@@ -70,24 +64,28 @@ export default {
                 }
 
                 seriesToInsert.push(entryToPush);
+                let currentAxisList =  _.get(data.currentAxis[valueAxis.base.name], 'axisList')
+                let currentAxisListItem = currentAxisList[entry.valueAxisIndex]
+                let offsetCalcResult = calculateOffset(currentAxisListItem, currentAxisList, valueAxis.spacing)
                 let valueAxisItemToPush = {
                     type: 'value',
                     name: entry.name,
                     min: entry.min,
                     max: entry.max,
                     // NOTE this condition could be optimized
-                    offset: (entry.valueAxisIndex !== 0 ? ((entry.valueAxisIndex - 1) * valueAxis.spacing) : 0),
-                    position: _.get(data.currentAxis[valueAxis.base.name], 'axisList')[entry.valueAxisIndex].position,
+                    offset: offsetCalcResult.offset,
+                    position: currentAxisListItem.position,
                     axisLine: {lineStyle: {}}
                 }
-                options.grid[valueAxisItemToPush.position] += valueAxis.spacing;
                 valueAxisToInsert.push(valueAxisItemToPush);
-                console.log(options.grid);
+                console.log(offsetCalcResult.position)
+                options.grid[offsetCalcResult.position] += offsetCalcResult.offset;
+                
             }
         })
         options[valueAxis.base.name] = valueAxisToInsert;
         options.series = seriesToInsert;
-        console.log('OPTIONS-ALT', options);
+        // console.log('OPTIONS-ALT', options);
         return options;
     }
 }

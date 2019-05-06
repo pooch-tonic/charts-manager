@@ -62,7 +62,7 @@
                                                     :label="key" type="range"
                                                     min="-500"
                                                     max="500"
-                                                    v-model="subParameter.value"
+                                                    v-model.number="subParameter.value"
                                                     />
                                                     <BInput 
                                                     v-if="subParameter.type === 'text'" 

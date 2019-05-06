@@ -281,10 +281,20 @@ const chartSystemTypes = {
     }
 }
 
+const dimensionTypes = {
+    category: {
+        name: 'category'
+    },
+    value: {
+        name: 'value'
+    }
+}
+
 export {
     chartParameters,
     chartSystemTypes,
     chartTypes,
     axisTypes,
-    sortTypes
+    sortTypes,
+    dimensionTypes
 }
