@@ -51,6 +51,14 @@ const defaultData = {
             [ "Zephyr", 24, 48, 2 ]
         ],
     },
+    categories: [
+        {
+            name: "name",
+            dimension: "name",
+            categoryAxisIndex: 0,
+            show: true
+        }
+    ],
     series: [
         {
             name: "screen time (hrs)",
@@ -85,7 +93,7 @@ const defaultData = {
     ],
     sort: sortTypes.none,
     currentAxis: {
-        xAxis: {
+        primaryAxis: {
             spacing: 80,
             base: axisTypes.x,
             axisList: [
@@ -97,7 +105,7 @@ const defaultData = {
             ],
             isMain: true
         },
-        yAxis: {
+        secondaryAxis: {
             spacing: 80,
             base: axisTypes.y,
             axisList: [

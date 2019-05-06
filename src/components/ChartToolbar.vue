@@ -94,6 +94,171 @@
             </div>
             <!--<BButton type="submit">Submit</BButton>-->
         </BTab>
+        <BTab title="categories" active>
+            <div id="categories-toolbar" class="tablist" role="tablist">
+                <BCard no-body v-for="(category, index) in storeData.categories" :key="index">
+                    <BCardHeader header-tag="header" role="tab">
+                        <BButton block v-b-toggle="'categories-accordion-' + index" variant="info">
+                            {{ category.name }}
+                        </BButton>
+                    </BCardHeader>
+                    <BCollapse :id="'categories-accordion-' + index" accordion="categoriesToolbarMenu">
+                        <BCardBody>
+                            <BContainer>
+                                <BRow align-h="between">
+                                    <BCol cols="9">
+                                        <BInputGroup prepend="show">
+                                            <BFormCheckbox
+                                            switch
+                                            size="lg"
+                                            label="show" 
+                                            type="checkbox"
+                                            v-model="category.show"
+                                            :disabled="category.categoryAxisIndex <= 0"
+                                            />
+                                        </BInputGroup>
+                                    </BCol>
+                                    <BCol cols="3">
+                                        <BButton 
+                                        block 
+                                        variant="danger" 
+                                        @click="handleCategoryDeletion(category)"
+                                        v-if="category.categoryAxisIndex > 0"
+                                        >
+                                            delete
+                                        </BButton>
+                                    </BCol>
+                                </BRow>
+                                <BRow>
+                                    <BCol>
+                                        <BInputGroup prepend="name">
+                                            <BInput
+                                            v-model="category.name"
+                                            type="text"
+                                            />
+                                        </BInputGroup>
+                                    </BCol>
+                                </BRow>
+                                <BRow>
+                                    <BCol>
+                                        <BInputGroup prepend="dimension">
+                                            <BFormSelect 
+                                            v-model="category.dimension" 
+                                            label="category"
+                                            :options="storeDimensions"
+                                            />
+                                        </BInputGroup>
+                                    </BCol>
+                                </BRow>
+                                <BRow>
+                                    <BCol>
+                                        <BInputGroup prepend="category axis bind">
+                                            <BFormSelect
+                                            label="axis bind" 
+                                            v-model="category.categoryAxisIndex"
+                                            >
+                                                <option
+                                                v-for="(axis, index) in getCategoryAxisFromCurrentAxis().axisList"
+                                                :value="axis.axisIndex"
+                                                :key="index"
+                                                >
+                                                    {{ axis.name }}
+                                                </option>
+                                            </BFormSelect>
+                                        </BInputGroup>
+                                    </BCol>
+                                </BRow>
+                            </BContainer>
+                        </BCardBody>
+                    </BCollapse>
+                </BCard>
+                <BCard 
+                no-body
+                bg-variant="light"
+                >
+                    <div v-if="!createCategoryForm" @click="handleCategoryCreationStart" variant="light">
+                        <BButton block variant="light">
+                            +
+                        </BButton>
+                    </div>
+                    <div v-else>
+                        <BCardHeader>
+                            <BButtonToolbar justify>
+                                <BButtonGroup>
+                                    <BButton disabled variant="default">
+                                        Create a new category
+                                    </BButton>
+                                </BButtonGroup>
+                                <BButtonGroup>
+                                    <BButton @click="handleCategoryCreationCancel">
+                                        x
+                                    </BButton>
+                                </BButtonGroup>
+                            </BButtonToolbar>
+                        </BCardHeader>
+                        <BCardBody>
+                            <BContainer>
+                                <BRow>
+                                    <BCol>
+                                        <BInputGroup prepend="name">
+                                            <BInput
+                                            label="name" 
+                                            type="text"
+                                            v-model.lazy="createCategoryForm.name"
+                                            />
+                                        </BInputGroup>
+                                    </BCol>
+                                </BRow>
+                                <BRow>
+                                    <BCol>
+                                        <BInputGroup
+                                        prepend="dimension"
+                                        >
+                                            <BFormSelect
+                                            label="dimension" 
+                                            v-model="createCategoryForm.dimension"
+                                            >
+                                                <option
+                                                v-for="(dimension, index) in getCategoryDimensions()"
+                                                :value="dimension.name"
+                                                :key="index"
+                                                >
+                                                    {{ dimension.name }}
+                                                </option>
+                                            </BFormSelect>
+                                        </BInputGroup>
+                                    </BCol>
+                                </BRow>
+                                <BRow>
+                                    <BCol>
+                                        <BInputGroup
+                                        prepend="category axis bind"
+                                        >
+                                            <BFormSelect
+                                            label="axis bind" 
+                                            v-model="createCategoryForm.categoryAxisIndex"
+                                            >
+                                                <option
+                                                v-for="(axis, index) in getCategoryAxisFromCurrentAxis().axisList"
+                                                :value="axis.axisIndex"
+                                                :key="index"
+                                                >
+                                                    {{ axis.name }}
+                                                </option>
+                                            </BFormSelect>
+                                        </BInputGroup>
+                                    </BCol>
+                                </BRow>
+                            </BContainer>
+                        </BCardBody>
+                        <BCardFooter>
+                            <BButton @click="handleCategoryCreationSubmit">Submit</BButton>
+                        </BCardFooter>
+                    </div>
+                </BCard>
+            </div>
+            <!--<BButton type="submit">Submit</BButton>-->
+        </BTab>
         <BTab title="series">
             <div id="series-toolbar" class="tablist" role="tablist">
                 <BCard 
@@ -118,6 +283,7 @@
                                             label="show" 
                                             type="checkbox"
                                             v-model="entry.show"
+                                            :disabled="entry.valueAxisIndex <= 0"
                                             />
                                         </BInputGroup>
                                     </BCol>
@@ -338,7 +504,7 @@
                             <BButton @click="this.handleEntryCreationSubmit">Submit</BButton>
                         </BCardFooter>
                     </div>
-                </BCard><!-- -->
+                </BCard>
             </div>
         </BTab>
         <BTab title="axis">
@@ -499,8 +665,8 @@
 
 <script>
 import { BContainer, BRow, BCol, BTabs, BTab, BForm, BFormCheckbox, BFormCheckboxGroup, BButton, BButtonGroup, BButtonToolbar, BInput, BInputGroup, BCard, BCardHeader, BCardBody, BCardFooter, BCardText, BCollapse, BFormSelect } from 'bootstrap-vue'
-import { mapGetters, mapActions } from 'vuex';
-import { chartSystemTypes, chartTypes, chartParameters, sortTypes, axisTypes } from '@/config/chart-options';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
+import { chartSystemTypes, chartTypes, chartParameters, sortTypes, axisTypes, dimensionTypes } from '@/config/chart-options';
 import { toType } from '@/util/type-checker';
 import lodash from 'lodash';
 import store from '@/store';
@@ -509,6 +675,7 @@ export default {
     name: 'ChartToolbar',
     data() {
         return {
+            createCategoryForm: null,
             createEntryForm: null,
             createAxisForm: null
         }  
@@ -544,6 +711,9 @@ export default {
         storeChartSystem: {
             get() {
                 return this.getChartSystem();
+            },
+            set(newChartSystem) {
+                this.UPDATE_CHART_SYSTEM(newChartSystem);
             }
         },
         storeSort: {
@@ -563,9 +733,14 @@ export default {
         }
     },
     methods: {
+        ...mapMutations([
+            'UPDATE_CHART_SYSTEM'
+        ]),
         ...mapActions([
+            'createCategory',
             'createEntry',
             'createAxis',
+            'deleteCategory',
             'deleteEntry',
             'deleteAxis'
         ]),
@@ -584,14 +759,36 @@ export default {
         getAxisTypes() {
             return axisTypes;
         },
-        getValueDimensions() {
-            return _.tail(store.getters.getData().dataset.dimensions)
+        getCategoryDimensions() {
+            return _.filter(store.getters.getData().dataset.dimensions, {'type': dimensionTypes.category})
         },
-        getMainAxisFromCurrentAxis() {
+        getValueDimensions() {
+            return _.filter(store.getters.getData().dataset.dimensions, {'type': dimensionTypes.value})
+        },
+        getCategoryAxisFromCurrentAxis() {
             return _.find(store.getters.getData().currentAxis, {isMain: true});
         },
         getValueAxisFromCurrentAxis() {
             return _.find(store.getters.getData().currentAxis, {isMain: false});
+        },
+        handleCategoryCreationStart() {
+
+            this.createCategoryForm = {
+                name: '',
+                dimension: this.getCategoryDimensions()[0].type.name,
+                categoryAxisIndex: this.getCategoryAxisFromCurrentAxis().axisList[0].axisIndex,
+                show: true
+            };
+        },
+        handleCategoryCreationCancel() {
+            this.createCategoryForm = null;
+        },
+        handleCategoryCreationSubmit() {
+            this.createCategory(this.createCategoryForm);
+            this.handleCategoryCreationCancel();
+        },
+        handleCategoryDeletion(categoryToDelete) {
+            this.deleteCategory(categoryToDelete);
         },
         handleEntryCreationStart() {
             this.createEntryForm = {

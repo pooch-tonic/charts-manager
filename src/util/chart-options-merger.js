@@ -16,7 +16,7 @@ const processObject = function(option) {
     return {name: option.name, propsToInsert: propsToInsert};
 }
 
-const processArray = function(option, filteredOptions) {
+const processArray = function(option) {
     let propsToInsert = [];
     let optionName = _.first(option).name;
 
@@ -36,9 +36,9 @@ export default {
             let res;
 
             if (toType(option) === 'array') {
-                res = processArray(option, filteredOptions);
+                res = processArray(option);
             } else {
-                res = processObject(option, filteredOptions);
+                res = processObject(option);
             }
 
             filteredOptions[res.name] = res.propsToInsert;

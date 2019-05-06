@@ -49,22 +49,35 @@ export default new Vuex.Store({
     },
     mutations: {
         UPDATE_CHART_SYSTEM: function(state, newChartSystem) {
+            state.data.currentAxis.primaryAxis.base = newChartSystem.allowedAxisTypes[0]
+            state.data.currentAxis.secondaryAxis.base = newChartSystem.allowedAxisTypes[1]
             state.chartConfig.chartSystem = newChartSystem
         },
-        UPDATE_SORT: function(state, newChartSystem) {
-
+        CREATE_CATEGORY: function(state, newCategory) {
+            state.data.categories.push(newCategory)
         },
         CREATE_ENTRY: function(state, newEntry) {
             state.data.series.push(newEntry)
         },
         CREATE_AXIS: function(state, newAxis) {
-            let targetAxisType = state.data.currentAxis[newAxis.base.name]
+            let targetAxisType = _.find(state.data.currentAxis, {'base': newAxis.base})
             let newAxisToPush = {
                 name: newAxis.name,
                 axisIndex: targetAxisType.axisList.length,
                 position: _.last(newAxis.base.positions)
             }
             targetAxisType.axisList.push(newAxisToPush)
+        },
+        DELETE_CATEGORY: function(state, categoryToDelete) {
+            let categories = _.cloneDeep(state.data.categories)
+            let removedCategoryAxisIndex = categoryToDelete.categoryAxisIndex
+            _.remove(categories, categoryToDelete)
+            categories.forEach(category => {
+                if (category.categoryAxisIndex > removedCategoryAxisIndex) {
+                    category.categoryAxisIndex--
+                }
+            })
+            Vue.set(state.data, 'categories', categories)
         },
         DELETE_ENTRY: function(state, entryToDelete) {
             let series = _.cloneDeep(state.data.series)
@@ -99,12 +112,18 @@ export default new Vuex.Store({
         }
     },
     actions: {
+        createCategory({commit}, newCategory) {
+            commit('CREATE_CATEGORY', newCategory)
+        },
         createEntry({commit}, newEntry) {
             commit('CREATE_ENTRY', newEntry)
         },
         createAxis({commit}, newAxis) {
             // TODO no same names
             commit('CREATE_AXIS', newAxis)
+        },
+        deleteCategory({commit}, categoryToDelete) {
+            commit('DELETE_CATEGORY', categoryToDelete)
         },
         deleteEntry({commit}, entryToDelete) {
             commit('DELETE_ENTRY', entryToDelete)
