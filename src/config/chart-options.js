@@ -139,22 +139,10 @@ const chartParameters = {
         name: 'angleAxis',
         displayName: 'angle axis',
         content: {
-            startAngle: {
-                value: 90,
-                type: types.number
-            },
             clockwise: {
                 value: true,
                 type: types.boolean
             },
-            min: {
-                value: null,
-                type: types.number
-            },
-            max: {
-                value: null,
-                type: types.number
-            }
         }
     },
     radiusAxis: {
@@ -185,8 +173,8 @@ const chartParameters = {
 };
 
 const chartTypes = {
-    line: {
-        name: 'line',
+    line2d: {
+        name: 'line (cartesian 2D)',
         type: 'line',
         isPolar: false,
         allowedParameters: [
@@ -198,10 +186,22 @@ const chartTypes = {
             chartParameters.tooltip
         ]
     },
+    linePolar: {
+        name: 'line (polar)',
+        type: 'line',
+        isPolar: true,
+        allowedParameters: [
+            chartParameters.title,
+            chartParameters.legend,
+            chartParameters.polar,
+            chartParameters.angleAxis,
+            chartParameters.radiusAxis,
+            chartParameters.tooltip
+        ]
+    },
     bar2d: {
         name: 'bar (cartesian 2D)',
         type: 'bar',
-        //typeSerie: donne la compatibilité
         isPolar: false,
         allowedParameters: [
             chartParameters.title,
@@ -252,7 +252,7 @@ const chartSystemTypes = {
             chartParameters.tooltip
         ],
         allowedChartTypes: [
-            chartTypes.line,
+            chartTypes.line2d,
             chartTypes.bar2d
         ],
         allowedAxisTypes: [
@@ -272,6 +272,7 @@ const chartSystemTypes = {
         ],
         allowedChartTypes: [
             chartTypes.barPolar,
+            chartTypes.linePolar,
             chartTypes.pie
         ],
         allowedAxisTypes: [
@@ -290,11 +291,31 @@ const dimensionTypes = {
     }
 }
 
+const seriesOptions = {
+    step: [
+        'none',
+        'start',
+        'middle',
+        'end'
+    ],
+    symbol: [
+        'circle',
+        'rect',
+        'roundRect',
+        'triangle',
+        'diamond',
+        'pin',
+        'arrow',
+        'none'
+    ]
+}
+
 export {
     chartParameters,
     chartSystemTypes,
     chartTypes,
     axisTypes,
     sortTypes,
-    dimensionTypes
+    dimensionTypes,
+    seriesOptions
 }

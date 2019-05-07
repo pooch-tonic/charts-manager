@@ -21,8 +21,13 @@ const extractColumn = function(baseArray, extractIndex) {
     return extractedArray;
 }
 
-const findcategoryAxis = function(categoryAxis) {
-
+const getFirstValueFromObject = function(object) {
+    let result;
+    for (let index = 0; index < 1; index++) {
+      let key = Object.keys(object)[0];
+      result = object[key];
+    }
+    return result;
 }
 
 // https://ecomfe.github.io/echarts-examples/public/editor.html?c=multiple-y-axis
@@ -33,12 +38,14 @@ export default {
         let dataset = data.dataset;
         let categories = data.categories;
         let series = data.series;
-        let categoryAxis = _.find(data.currentAxis, {isMain: true});
-        let valueAxis = _.find(data.currentAxis, {isMain: false});
+        let stacks = data.stacks;
+        let categoryAxis = data.currentAxis[data.categoryAxis];
+        let valueAxisKey = (data.categoryAxis === 'primaryAxis' ? 'secondaryAxis' : 'primaryAxis');
+        let valueAxis = data.currentAxis[valueAxisKey];
         let categoryAxisToInsert = [];
         let valueAxisToInsert = [];
-        console.log(data, categoryAxis, valueAxis);
 
+        console.log(data)
         categories.forEach(category => {
             if (category.show) {
                 let categoryData = extractColumn(dataset.source, _.findIndex(dataset.dimensions, { name: category.dimension }))
@@ -73,28 +80,43 @@ export default {
         })
 
         series.forEach(entry => {
-
             if (entry.show) {
                 let entryData = extractColumn(dataset.source, _.findIndex(dataset.dimensions, { name: entry.dimension }))
                 let entryToPush = {
                     name: entry.name,
                     type: entry.type.type,
                     data: entryData,
-                    coordinateSystem: chartSystem.name
+                    coordinateSystem: chartSystem.name,
+                    symbol: entry.symbol
                 };
 
-                if (chartSystem.name !== 'polar') {
-                    entryToPush[valueAxis.base.name + 'Index'] = entry.valueAxisIndex
+                if (entry.stack !== 'none') {
+                    let referenceStack = _.find(stacks, {name: entry.stack});
+                    if (referenceStack !== undefined && referenceStack.show) {
+                        entryToPush['stack'] = entry.stack;
+                    }
                 }
 
-                // enable smoothing for line series only
-                if (entry.smooth > 0) {
+                if (chartSystem.name !== 'polar') {
+                    entryToPush[valueAxis.base.name + 'Index'] = entry.valueAxisIndex;
+                }
+
+                // enable options for line series only
+                if (entry.type.type === 'line') {
                     entryToPush['smooth'] = entry.smooth / 100;
+
+                    if (entry.areaStyle) {
+                        entryToPush['areaStyle'] = {};
+                    }
+
+                    if (entry.step !== 'none') {
+                        entryToPush['step'] = entry.step;
+                    }
                 }
 
                 seriesToInsert.push(entryToPush);
-                let currentAxisList = valueAxis.axisList
-                let currentAxisListItem = currentAxisList[entry.valueAxisIndex]
+                let currentAxisList = valueAxis.axisList;
+                let currentAxisListItem = currentAxisList[entry.valueAxisIndex];
                 let valueAxisItemToPush;
                 
                 if (chartSystem.name === 'polar') {
@@ -106,7 +128,7 @@ export default {
                     }*/
                     valueAxisToInsert = {}
                 } else {
-                    let offsetCalcResult = calculateOffset(currentAxisListItem, currentAxisList, valueAxis.spacing)
+                    let offsetCalcResult = calculateOffset(currentAxisListItem, currentAxisList, valueAxis.spacing);
                     valueAxisItemToPush = {
                         type: 'value',
                         name: entry.name,
@@ -115,19 +137,19 @@ export default {
                         offset: offsetCalcResult,
                         position: currentAxisListItem.position,
                         axisLine: {lineStyle: {}}
-                    }
+                    };
                     options.grid[currentAxisListItem.position] += offsetCalcResult;
                     valueAxisToInsert.push(valueAxisItemToPush);
                 }
             } else {
-                let hiddenEntryAxisIndex = entry.valueAxisIndex
+                let hiddenEntryAxisIndex = entry.valueAxisIndex;
                 series.forEach(_entry => {
                     if (_entry.valueAxisIndex > hiddenEntryAxisIndex) {
-                        _entry.valueAxisIndex--
+                        _entry.valueAxisIndex--;
                     }
-                })
+                });
             }
-        })
+        });
         options[categoryAxis.base.name] = categoryAxisToInsert;
         options[valueAxis.base.name] = valueAxisToInsert;
         options.series = seriesToInsert;

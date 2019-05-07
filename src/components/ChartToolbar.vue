@@ -1,6 +1,6 @@
 <template>
     <BTabs>
-        <BTab title="chart" active>
+        <BTab title="chart" active @click="cancelAllForms">
             <div id="chart-toolbar" class="tablist" role="tablist">
                 <BInputGroup prepend="sort (primary)">
                     <BFormSelect
@@ -94,7 +94,7 @@
             </div>
             <!--<BButton type="submit">Submit</BButton>-->
         </BTab>
-        <BTab title="categories" active>
+        <BTab title="categories" @click="cancelAllForms">
             <div id="categories-toolbar" class="tablist" role="tablist">
                 <BCard no-body v-for="(category, index) in storeData.categories" :key="index">
                     <BCardHeader header-tag="header" role="tab">
@@ -150,7 +150,7 @@
                                         </BInputGroup>
                                     </BCol>
                                 </BRow>
-                                <BRow>
+                                <BRow v-if="storeChartSystem.name !== 'polar'">
                                     <BCol>
                                         <BInputGroup prepend="category axis bind">
                                             <BFormSelect
@@ -259,255 +259,400 @@
             </div>
             <!--<BButton type="submit">Submit</BButton>-->
         </BTab>
-        <BTab title="series">
+        <BTab title="series" @click="cancelAllForms">
             <div id="series-toolbar" class="tablist" role="tablist">
-                <BCard 
-                no-body
-                v-for="(entry, index) in storeData.series"
-                :key="index"
-                >
-                    <BCardHeader header-tag="header" role="tab">
-                        <BButton v-b-toggle="'series-accordion-' + index" block variant="info">
-                            {{ entry.name }}
-                        </BButton>
-                    </BCardHeader>
-                    <BCollapse :id="'series-accordion-' + index" accordion="seriesToolbarMenu">
-                        <BCardBody>
-                            <BContainer>
-                                <BRow align-h="between">
-                                    <BCol cols="9">
-                                        <BInputGroup prepend="show">
-                                            <BFormCheckbox
-                                            switch
-                                            size="lg"
-                                            label="show" 
-                                            type="checkbox"
-                                            v-model="entry.show"
-                                            :disabled="entry.valueAxisIndex <= 0"
-                                            />
-                                        </BInputGroup>
-                                    </BCol>
-                                    <BCol cols="3">
-                                        <BButton 
-                                        block 
-                                        variant="danger" 
-                                        @click="handleEntryDeletion(entry)"
-                                        v-if="entry.valueAxisIndex > 0"
-                                        >
-                                            delete
-                                        </BButton>
-                                    </BCol>
-                                </BRow>
-                                <BRow>
-                                    <BCol>
-                                        <BInputGroup prepend="name">
-                                            <BInput
-                                            label="name" 
-                                            type="text"
-                                            v-model.lazy="entry.name"
-                                            />
-                                        </BInputGroup>
-                                    </BCol>
-                                </BRow>
-                                <BRow>
-                                    <BCol>
-                                        <BInputGroup prepend="type">
-                                            <BFormSelect
-                                            label="type" 
-                                            v-model="entry.type"
-                                            >
-                                                <option 
-                                                v-for="(chartType, index) in storeChartSystem.allowedChartTypes" 
-                                                :key="index"
-                                                :value="chartType"
-                                                >
-                                                    {{ chartType.name }}
-                                                </option>
-                                            </BFormSelect>
-                                        </BInputGroup>
-                                    </BCol>
-                                </BRow>
-                                <BRow v-if="entry.type.type === 'line'">
-                                    <BCol>
-                                        <BInputGroup prepend="smoothness">
-                                            <BInput  
-                                            label="smoothness" type="range"
-                                            min="0"
-                                            max="100"
-                                            v-model.number="entry.smooth"
-                                            />
-                                        </BInputGroup>
-                                    </BCol>
-                                </BRow>
-                                <BRow>
-                                    <BCol>
-                                        <BInputGroup prepend="dimension">
-                                            <BFormSelect
-                                            label="dimension" 
-                                            v-model="entry.dimension"
-                                            >
-                                                <option
-                                                v-for="(dimension, index) in getValueDimensions()"
-                                                :value="dimension.name"
-                                                :key="index"
-                                                >
-                                                    {{ dimension.name }}
-                                                </option>
-                                            </BFormSelect>
-                                        </BInputGroup>
-                                    </BCol>
-                                </BRow>
-                                <BRow>
-                                    <BCol>
-                                        <BInputGroup prepend="value axis bind">
-                                            <BFormSelect
-                                            label="axis bind" 
-                                            v-model="entry.valueAxisIndex"
-                                            >
-                                                <option
-                                                v-for="(axis, index) in getValueAxisFromCurrentAxis().axisList"
-                                                :value="axis.axisIndex"
-                                                :key="index"
-                                                >
-                                                    {{ axis.name }}
-                                                </option>
-                                            </BFormSelect>
-                                        </BInputGroup>
-                                    </BCol>
-                                </BRow>
-                                <BRow>
-                                    <BCol>
-                                        <BInputGroup prepend="min">
-                                            <BInput v-model="entry.min" label="min"/>
-                                        </BInputGroup>
-                                    </BCol>
-                                    <BCol>
-                                        <BInputGroup prepend="max">
-                                            <BInput v-model="entry.max" label="max"/>
-                                        </BInputGroup>
-                                    </BCol>
-                                </BRow>
-                            </BContainer>
-                        </BCardBody>
-                    </BCollapse>
-                </BCard>
-                <BCard 
-                no-body
-                bg-variant="light"
-                >
-                    <div v-if="!createEntryForm" @click="this.handleEntryCreationStart" variant="light">
-                        <BButton block variant="light">
-                            +
-                        </BButton>
-                    </div>
-                    <div v-else>
-                        <BCardHeader>
-                            <BButtonToolbar justify>
-                                <BButtonGroup>
-                                    <BButton disabled variant="default">
-                                        Create a new entry
+                <BTabs>
+                    <BTab title="series" active>
+                        <div id="series-tab" class="tablist" role="tablist">
+                            <BCard 
+                            no-body
+                            v-for="(entry, index) in storeData.series"
+                            :key="index"
+                            >
+                                <BCardHeader header-tag="header" role="tab">
+                                    <BButton v-b-toggle="'series-accordion-' + index" block variant="info">
+                                        {{ entry.name }}
                                     </BButton>
-                                </BButtonGroup>
-                                <BButtonGroup>
-                                    <BButton @click="this.handleEntryCreationCancel">
-                                        x
+                                </BCardHeader>
+                                <BCollapse :id="'series-accordion-' + index" accordion="seriesToolbarMenu">
+                                    <BCardBody>
+                                        <BContainer>
+                                            <BRow align-h="between">
+                                                <BCol cols="9">
+                                                    <BInputGroup prepend="show">
+                                                        <BFormCheckbox
+                                                        switch
+                                                        size="lg"
+                                                        label="show" 
+                                                        type="checkbox"
+                                                        v-model="entry.show"
+                                                        :disabled="entry.valueAxisIndex <= 0"
+                                                        />
+                                                    </BInputGroup>
+                                                </BCol>
+                                                <BCol cols="3">
+                                                    <BButton 
+                                                    block 
+                                                    variant="danger" 
+                                                    @click="handleEntryDeletion(entry)"
+                                                    v-if="entry.valueAxisIndex > 0"
+                                                    >
+                                                        delete
+                                                    </BButton>
+                                                </BCol>
+                                            </BRow>
+                                            <BRow>
+                                                <BCol>
+                                                    <BInputGroup prepend="name">
+                                                        <BInput
+                                                        label="name" 
+                                                        type="text"
+                                                        v-model.lazy="entry.name"
+                                                        />
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
+                                            <BRow>
+                                                <BCol>
+                                                    <BInputGroup prepend="type">
+                                                        <BFormSelect
+                                                        label="type" 
+                                                        v-model="entry.type"
+                                                        >
+                                                            <option 
+                                                            v-for="(chartType, index) in storeChartSystem.allowedChartTypes" 
+                                                            :key="index"
+                                                            :value="chartType"
+                                                            >
+                                                                {{ chartType.name }}
+                                                            </option>
+                                                        </BFormSelect>
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
+                                            <BRow v-if="entry.type.type === 'line'">
+                                                <BCol cols="12">
+                                                    <BInputGroup prepend="area">
+                                                        <BFormCheckbox
+                                                        switch
+                                                        size="lg"
+                                                        label="area" 
+                                                        type="checkbox"
+                                                        v-model="entry.areaStyle"
+                                                        />
+                                                    </BInputGroup>
+                                                </BCol>
+                                                <BCol cols="12">
+                                                    <BInputGroup prepend="smoothness">
+                                                        <BInput  
+                                                        label="smoothness" type="range"
+                                                        min="0"
+                                                        max="100"
+                                                        v-model.number="entry.smooth"
+                                                        />
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
+                                            <BRow v-if="entry.type.name === 'line (cartesian 2D)'">
+                                                <BCol cols="12">
+                                                    <BInputGroup prepend="step">
+                                                        <BFormSelect
+                                                        label="step" 
+                                                        v-model="entry.step"
+                                                        :options="getSeriesOptions().step"
+                                                        />
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
+                                            <BRow>
+                                                <BCol>
+                                                    <BInputGroup prepend="stack">
+                                                        <BFormSelect
+                                                        label="stack" 
+                                                        v-model="entry.stack"
+                                                        >
+                                                            <option value="none">
+                                                                none
+                                                            </option>
+                                                            <option
+                                                            v-for="(stack, index) in storeData.stacks"
+                                                            :key="index"
+                                                            :value="stack.name"
+                                                            >
+                                                                {{ stack.name }}
+                                                            </option>
+                                                        </BFormSelect>
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
+                                            <BRow>
+                                                <BCol>
+                                                    <BInputGroup prepend="symbol">
+                                                        <BFormSelect
+                                                        label="symbol" 
+                                                        v-model="entry.symbol"
+                                                        :options="getSeriesOptions().symbol"
+                                                        />
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
+                                            <BRow>
+                                                <BCol>
+                                                    <BInputGroup prepend="dimension">
+                                                        <BFormSelect
+                                                        label="dimension" 
+                                                        v-model="entry.dimension"
+                                                        >
+                                                            <option
+                                                            v-for="(dimension, index) in getValueDimensions()"
+                                                            :value="dimension.name"
+                                                            :key="index"
+                                                            >
+                                                                {{ dimension.name }}
+                                                            </option>
+                                                        </BFormSelect>
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
+                                            <BRow v-if="storeChartSystem.name !== 'polar'">
+                                                <BCol>
+                                                    <BInputGroup prepend="value axis bind">
+                                                        <BFormSelect
+                                                        label="axis bind" 
+                                                        v-model="entry.valueAxisIndex"
+                                                        >
+                                                            <option
+                                                            v-for="(axis, index) in getValueAxisFromCurrentAxis().axisList"
+                                                            :value="axis.axisIndex"
+                                                            :key="index"
+                                                            >
+                                                                {{ axis.name }}
+                                                            </option>
+                                                        </BFormSelect>
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
+                                            <BRow v-if="storeChartSystem.name !== 'polar'">
+                                                <BCol>
+                                                    <BInputGroup prepend="min">
+                                                        <BInput v-model="entry.min" label="min"/>
+                                                    </BInputGroup>
+                                                </BCol>
+                                                <BCol>
+                                                    <BInputGroup prepend="max">
+                                                        <BInput v-model="entry.max" label="max"/>
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
+                                        </BContainer>
+                                    </BCardBody>
+                                </BCollapse>
+                            </BCard>
+                            <BCard 
+                            no-body
+                            bg-variant="light"
+                            >
+                                <div v-if="!createEntryForm" @click="this.handleEntryCreationStart" variant="light">
+                                    <BButton block variant="light">
+                                        +
                                     </BButton>
-                                </BButtonGroup>
-                            </BButtonToolbar>
-                        </BCardHeader>
-                        <BCardBody>
-                            <BContainer>
-                                <BRow>
-                                    <BCol>
-                                        <BInputGroup prepend="name">
-                                            <BInput
-                                            label="name" 
-                                            type="text"
-                                            v-model.lazy="createEntryForm.name"
-                                            />
-                                        </BInputGroup>
-                                    </BCol>
-                                </BRow>
-                                <BRow>
-                                    <BCol>
-                                        <BInputGroup prepend="type">
-                                            <BFormSelect
-                                            label="type" 
-                                            v-model="createEntryForm.type"
-                                            >
-                                                <option 
-                                                v-for="(chartType, index) in storeChartSystem.allowedChartTypes" 
-                                                :key="index"
-                                                :value="chartType"
-                                                >
-                                                    {{ chartType.name }}
-                                                </option>
-                                            </BFormSelect>
-                                        </BInputGroup>
-                                    </BCol>
-                                </BRow>
-                                <BRow>
-                                    <BCol>
-                                        <BInputGroup
-                                        prepend="dimension"
-                                        >
-                                            <BFormSelect
-                                            label="dimension" 
-                                            v-model="createEntryForm.dimension"
-                                            >
-                                                <option
-                                                v-for="(dimension, index) in getValueDimensions()"
-                                                :value="dimension.name"
-                                                :key="index"
-                                                >
-                                                    {{ dimension.name }}
-                                                </option>
-                                            </BFormSelect>
-                                        </BInputGroup>
-                                    </BCol>
-                                </BRow>
-                                <BRow>
-                                    <BCol>
-                                        <BInputGroup
-                                        prepend="value axis bind"
-                                        >
-                                            <BFormSelect
-                                            label="axis bind" 
-                                            v-model="createEntryForm.valueAxisIndex"
-                                            >
-                                                <option
-                                                v-for="(axis, index) in getValueAxisFromCurrentAxis().axisList"
-                                                :value="axis.axisIndex"
-                                                :key="index"
-                                                >
-                                                    {{ axis.name }}
-                                                </option>
-                                            </BFormSelect>
-                                        </BInputGroup>
-                                    </BCol>
-                                </BRow>
-                                <BRow>
-                                    <BCol>
-                                        <BInputGroup prepend="min">
-                                            <BInput v-model="createEntryForm.min" label="min"/>
-                                        </BInputGroup>
-                                    </BCol>
-                                    <BCol>
-                                        <BInputGroup prepend="max">
-                                            <BInput v-model="createEntryForm.max" label="max"/>
-                                        </BInputGroup>
-                                    </BCol>
-                                </BRow>
-                            </BContainer>
-                        </BCardBody>
-                        <BCardFooter>
-                            <BButton @click="this.handleEntryCreationSubmit">Submit</BButton>
-                        </BCardFooter>
-                    </div>
-                </BCard>
+                                </div>
+                                <div v-else>
+                                    <BCardHeader>
+                                        <BButtonToolbar justify>
+                                            <BButtonGroup>
+                                                <BButton disabled variant="default">
+                                                    Create a new entry
+                                                </BButton>
+                                            </BButtonGroup>
+                                            <BButtonGroup>
+                                                <BButton @click="this.handleEntryCreationCancel">
+                                                    x
+                                                </BButton>
+                                            </BButtonGroup>
+                                        </BButtonToolbar>
+                                    </BCardHeader>
+                                    <BCardBody>
+                                        <BContainer>
+                                            <BRow>
+                                                <BCol>
+                                                    <BInputGroup prepend="name">
+                                                        <BInput
+                                                        label="name" 
+                                                        type="text"
+                                                        v-model.lazy="createEntryForm.name"
+                                                        />
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
+                                            <BRow>
+                                                <BCol>
+                                                    <BInputGroup prepend="type">
+                                                        <BFormSelect
+                                                        label="type" 
+                                                        v-model="createEntryForm.type"
+                                                        >
+                                                            <option 
+                                                            v-for="(chartType, index) in storeChartSystem.allowedChartTypes" 
+                                                            :key="index"
+                                                            :value="chartType"
+                                                            >
+                                                                {{ chartType.name }}
+                                                            </option>
+                                                        </BFormSelect>
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
+                                            <BRow>
+                                                <BCol>
+                                                    <BInputGroup
+                                                    prepend="dimension"
+                                                    >
+                                                        <BFormSelect
+                                                        label="dimension" 
+                                                        v-model="createEntryForm.dimension"
+                                                        >
+                                                            <option
+                                                            v-for="(dimension, index) in getValueDimensions()"
+                                                            :value="dimension.name"
+                                                            :key="index"
+                                                            >
+                                                                {{ dimension.name }}
+                                                            </option>
+                                                        </BFormSelect>
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
+                                            <BRow>
+                                                <BCol>
+                                                    <BInputGroup
+                                                    prepend="value axis bind"
+                                                    >
+                                                        <BFormSelect
+                                                        label="axis bind" 
+                                                        v-model="createEntryForm.valueAxisIndex"
+                                                        >
+                                                            <option
+                                                            v-for="(axis, index) in getValueAxisFromCurrentAxis().axisList"
+                                                            :value="axis.axisIndex"
+                                                            :key="index"
+                                                            >
+                                                                {{ axis.name }}
+                                                            </option>
+                                                        </BFormSelect>
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
+                                            <BRow>
+                                                <BCol>
+                                                    <BInputGroup prepend="min">
+                                                        <BInput v-model="createEntryForm.min" label="min"/>
+                                                    </BInputGroup>
+                                                </BCol>
+                                                <BCol>
+                                                    <BInputGroup prepend="max">
+                                                        <BInput v-model="createEntryForm.max" label="max"/>
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
+                                        </BContainer>
+                                    </BCardBody>
+                                    <BCardFooter>
+                                        <BButton @click="this.handleEntryCreationSubmit">Submit</BButton>
+                                    </BCardFooter>
+                                </div>
+                            </BCard>
+                        </div>
+                    </BTab>
+                    <BTab title="stacks">
+                        <div id="stacks-tab" class="tablist" role="tablist">
+                            <BCard 
+                            no-body
+                            v-for="(stack, index) in storeData.stacks"
+                            :key="index"
+                            >
+                                <BCardHeader header-tag="header" role="tab">
+                                    {{ stack.name }}
+                                </BCardHeader>
+                                <BCardBody>
+                                    <BContainer>
+                                        <BRow>
+                                            <BCol>
+                                                <BInputGroup prepend="show">
+                                                    <BFormCheckbox
+                                                    switch
+                                                    size="lg"
+                                                    label="show" 
+                                                    type="checkbox"
+                                                    v-model="stack.show"
+                                                    />
+                                                </BInputGroup>
+                                            </BCol>
+                                        </BRow>
+                                        <BRow>
+                                            <BCol>
+                                                <BInputGroup prepend="name">
+                                                    <BInput
+                                                    label="name" 
+                                                    type="text"
+                                                    v-model.lazy="stack.name"
+                                                    />
+                                                </BInputGroup>      
+                                            </BCol>
+                                        </BRow>
+                                    </BContainer>
+                                </BCardBody>
+                            </BCard>
+                            <BCard 
+                            no-body
+                            bg-variant="light"
+                            >
+                                <div v-if="!createStackForm" @click="handleStackCreationStart" variant="light">
+                                    <BButton block variant="light">
+                                        +
+                                    </BButton>
+                                </div>
+                                <div v-else>
+                                    <BCardHeader>
+                                        <BButtonToolbar justify>
+                                            <BButtonGroup>
+                                                <BButton disabled variant="default">
+                                                    Add a new stack
+                                                </BButton>
+                                            </BButtonGroup>
+                                            <BButtonGroup>
+                                                <BButton @click="handleStackCreationCancel">
+                                                    x
+                                                </BButton>
+                                            </BButtonGroup>
+                                        </BButtonToolbar>
+                                    </BCardHeader>
+                                    <BCardBody>
+                                        <BContainer>
+                                            <BRow>
+                                                <BCol>
+                                                    <BInputGroup prepend="name">
+                                                        <BInput
+                                                        label="name" 
+                                                        type="text"
+                                                        v-model.lazy="createStackForm.name"
+                                                        />
+                                                    </BInputGroup>                                       
+                                                </BCol>
+                                            </BRow>
+                                        </BContainer>
+                                    </BCardBody>
+                                    <BCardFooter>
+                                        <BButton @click="handleStackCreationSubmit">Submit</BButton>
+                                    </BCardFooter>
+                                </div>
+                            </BCard>  
+                        </div>
+                    </BTab>
+                </BTabs>
             </div>
         </BTab>
-        <BTab title="axis">
+        <BTab title="axis" @click="cancelAllForms">
             <div id="axis-toolbar" class="tablist" role="tablist">
                 <BInputGroup prepend="type">
                     <BFormSelect label="chart-type" v-model="storeChartSystem">
@@ -515,21 +660,33 @@
                         <option :value="getChartSystemTypes().polar">polar</option>
                     </BFormSelect>
                 </BInputGroup>
+                <BInputGroup prepend="category axis">
+                    <BFormSelect label="chart-type" v-model="selectedCategoryAxis">
+                        <option
+                        v-for="(axisType, key, index) in storeData.currentAxis"
+                        :key="index"
+                        :value="key"
+                        >
+                            {{ axisType.base.displayName }}
+                        </option>
+                    </BFormSelect>
+                </BInputGroup>
                 <br></br>
                 <BCard 
                 no-body
-                v-for="(axisType, key, index) in storeData.currentAxis"
+                v-for="(axisType, index) in storeData.currentAxis"
+                v-if="storeChartSystem.name !== 'polar'"
                 :key="index"
                 >
                     <BCardHeader header-tag="header" role="tab">
                         <BButton v-b-toggle="'axis-accordion-' + index" block variant="info">
-                            {{ key }}
+                            {{ axisType.base.name }}
                         </BButton>
                     </BCardHeader>
                     <BCollapse :id="'axis-accordion-' + index" accordion="axisToolbarMenu">
                         <BCardBody>
                             <BContainer>
-                                <BRow>
+                                <BRow v-if="storeChartSystem.name !== 'polar'">
                                     <BCol>
                                         <BInputGroup prepend="spacing (px)">
                                             <BInput
@@ -555,7 +712,7 @@
                                                             <BButton 
                                                             block 
                                                             variant="danger" 
-                                                            @click="handleAxisDeletion(axisType.base, axis)"
+                                                            @click="handleAxisDeletion(axisType, axis)"
                                                             v-if="axis.axisIndex > 0"
                                                             >
                                                                 delete
@@ -590,7 +747,7 @@
                                                             </BInputGroup>
                                                         </BCol>
                                                     </BRow>
-                                                    <BRow>
+                                                    <BRow v-if="storeChartSystem.name !== 'polar'">
                                                         <BCol>
                                                             <BInputGroup prepend="position">
                                                                 <BFormSelect
@@ -611,6 +768,7 @@
                                         <BCard 
                                         no-body
                                         bg-variant="light"
+                                        @blur="handleAxisCreationCancel"
                                         >
                                             <div v-if="!createAxisForm" @click="handleAxisCreationStart(axisType)" variant="light">
                                                 <BButton block variant="light">
@@ -666,7 +824,7 @@
 <script>
 import { BContainer, BRow, BCol, BTabs, BTab, BForm, BFormCheckbox, BFormCheckboxGroup, BButton, BButtonGroup, BButtonToolbar, BInput, BInputGroup, BCard, BCardHeader, BCardBody, BCardFooter, BCardText, BCollapse, BFormSelect } from 'bootstrap-vue'
 import { mapGetters, mapMutations, mapActions } from 'vuex';
-import { chartSystemTypes, chartTypes, chartParameters, sortTypes, axisTypes, dimensionTypes } from '@/config/chart-options';
+import { chartSystemTypes, chartTypes, chartParameters, sortTypes, axisTypes, dimensionTypes, seriesOptions } from '@/config/chart-options';
 import { toType } from '@/util/type-checker';
 import lodash from 'lodash';
 import store from '@/store';
@@ -677,7 +835,9 @@ export default {
         return {
             createCategoryForm: null,
             createEntryForm: null,
-            createAxisForm: null
+            createAxisForm: null,
+            createStackForm: null,
+            selectedCategoryAxis: 'primaryAxis'
         }  
     },
     components: {
@@ -724,7 +884,7 @@ export default {
         storeData: {
             get() {
                 return this.getData();
-            }
+            } 
         },
         storeDimensions: {
             get() {
@@ -759,6 +919,9 @@ export default {
         getAxisTypes() {
             return axisTypes;
         },
+        getSeriesOptions() {
+            return seriesOptions;
+        },
         getCategoryDimensions() {
             return _.filter(store.getters.getData().dataset.dimensions, {'type': dimensionTypes.category})
         },
@@ -766,13 +929,34 @@ export default {
             return _.filter(store.getters.getData().dataset.dimensions, {'type': dimensionTypes.value})
         },
         getCategoryAxisFromCurrentAxis() {
-            return _.find(store.getters.getData().currentAxis, {isMain: true});
+            return store.getters.getData().currentAxis[store.getters.getData().categoryAxis];
         },
         getValueAxisFromCurrentAxis() {
-            return _.find(store.getters.getData().currentAxis, {isMain: false});
+            return store.getters.getData().currentAxis[store.getters.getData().valueAxis];
+        },
+        cancelAllForms() {
+            this.handleStackCreationCancel();
+            this.handleCategoryCreationCancel();
+            this.handleEntryCreationCancel();
+            this.handleAxisCreationCancel();
+        },
+        handleStackCreationStart() {
+            this.createStackForm = {
+                name: '',
+                show: true
+            };
+        },
+        handleStackCreationCancel() {
+            this.createStackForm = null;
+        },
+        handleStackCreationSubmit() {
+            this.createStack(this.createStackForm);
+            this.handleStackCreationCancel();
+        },
+        handleStackDeletion(stackToDelete) {
+            this.deleteStack(stackToDelete);
         },
         handleCategoryCreationStart() {
-
             this.createCategoryForm = {
                 name: '',
                 dimension: this.getCategoryDimensions()[0].type.name,
@@ -791,14 +975,20 @@ export default {
             this.deleteCategory(categoryToDelete);
         },
         handleEntryCreationStart() {
+            console.log(this.getChartSystem())
             this.createEntryForm = {
                 name: '',
-                type: chartTypes.line,
+                type: this.getChartSystem().allowedChartTypes[0],
                 dimension: this.getValueDimensions()[0].name,
                 min: 0,
                 max: 100,
-                valueAxisIndex: this.getValueAxisFromCurrentAxis().axisList[0].axisIndex,
-                show: true
+                show: true,
+                smooth: 0,
+                stack: 'none',
+                step: 'none',
+                symbol: 'circle',
+                areaStyle: false,
+                valueAxisIndex: _.last(this.getValueAxisFromCurrentAxis().axisList).axisIndex
             };
         },
         handleEntryCreationCancel() {
@@ -826,6 +1016,11 @@ export default {
         },
         handleAxisDeletion(axisType, axisToDelete) {
             this.deleteAxis({axisType, axisToDelete});
+        }
+    },
+    watch: {
+        selectedCategoryAxis: function(newSelectedCategoryAxis, oldSelectedCategoryAxis) {
+            console.log(newSelectedCategoryAxis, oldSelectedCategoryAxis)
         }
     }
 }

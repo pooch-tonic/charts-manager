@@ -73,6 +73,9 @@ export default new Vuex.Store({
             }
             targetAxisType.axisList.push(newAxisToPush)
         },
+        CREATE_STACk: function(state, newStack) {
+            state.data.stacks.push(newStack)
+        },
         DELETE_CATEGORY: function(state, categoryToDelete) {
             let categories = _.cloneDeep(state.data.categories)
             let removedCategoryAxisIndex = categoryToDelete.categoryAxisIndex
@@ -99,18 +102,35 @@ export default new Vuex.Store({
             let axisType = axisData.axisType
             let axisToDelete = axisData.axisToDelete
             let data = _.cloneDeep(state.data)
-            let currentAxisType = data.currentAxis[axisType.name]
             let removedAxisIndex = axisToDelete.axisIndex
-            _.remove(currentAxisType.axisList, axisToDelete)
-            currentAxisType.axisList.forEach((axis) => {
+            _.remove(axisType.axisList, axisToDelete)
+            data.series.forEach(entry => {
+                if (entry.valueAxisIndex === removedAxisIndex) {
+                    _.remove(data.series, entry)
+                } else if (entry.valueAxisIndex > removedAxisIndex) {
+                    entry.valueAxisIndex--
+                }
+            })
+            axisType.axisList.forEach((axis) => {
                 if (axis.axisIndex > removedAxisIndex) {
                     axis.axisIndex--
                 }
             })
-            let lastIndex = currentAxisType.axisList.length - 1
+            let targetAxis
+            _.forEach(data.currentAxis, (_axisType, key) => {
+                if (_axisType.base.name === axisType.base.name) {
+                    targetAxis = key
+                }
+            })
+            data.currentAxis[targetAxis] = axisType
+            Vue.set(state, 'data', data)
+        },
+        DELETE_STACK: function(state, stackToDelete) {
+            let data = _.cloneDeep(state.data)
+            _.remove(data.stacks, stackToDelete)
             data.series.forEach(entry => {
-                if (entry.valueAxisIndex > lastIndex) {
-                    _.remove(data.series, entry)
+                if (entry.stack === stackToDelete.name) {
+                    entry.stack = 'none'
                 }
             })
             Vue.set(state, 'data', data)
@@ -124,8 +144,10 @@ export default new Vuex.Store({
             commit('CREATE_ENTRY', newEntry)
         },
         createAxis({commit}, newAxis) {
-            // TODO no same names
             commit('CREATE_AXIS', newAxis)
+        },
+        createStack({commit}, newStack) {
+            commit('CREATE_STACK', newStack)
         },
         deleteCategory({commit}, categoryToDelete) {
             commit('DELETE_CATEGORY', categoryToDelete)
@@ -135,6 +157,9 @@ export default new Vuex.Store({
         },
         deleteAxis({commit}, axisData) {
             commit('DELETE_AXIS', axisData)
+        },
+        deleteStack({commit}, stackToDelete) {
+            commit('DELETE_STACK', stackToDelete)
         }
     }
 })
