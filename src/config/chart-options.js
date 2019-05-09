@@ -307,6 +307,11 @@ const seriesOptions = {
         'pin',
         'arrow',
         'none'
+    ],
+    roseType: [
+        'none',
+        'radius',
+        'area'
     ]
 }
 

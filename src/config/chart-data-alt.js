@@ -76,6 +76,9 @@ const defaultData = {
             step: 'none',
             symbol: 'rect',
             areaStyle: false,
+            roseType: 'none',
+            innerRadius: 0,
+            outerRadius: 75,
             valueAxisIndex: 0
         },
         {
@@ -90,6 +93,9 @@ const defaultData = {
             step: 'none',
             symbol: 'triangle',
             areaStyle: false,
+            roseType: 'none',
+            innerRadius: 0,
+            outerRadius: 75,
             valueAxisIndex: 1
         },
         {
@@ -104,6 +110,9 @@ const defaultData = {
             step: 'none',
             symbol: 'none',
             areaStyle: true,
+            roseType: 'none',
+            innerRadius: 0,
+            outerRadius: 75,
             valueAxisIndex: 2
         },
         {
@@ -113,11 +122,14 @@ const defaultData = {
             min: 0,
             max: 50,
             show: true,
-            areaStyle: false,
             smooth: 0,
             stack: 'none',
             step: 'start',
             symbol: 'circle',
+            areaStyle: false,
+            roseType: 'none',
+            innerRadius: 0,
+            outerRadius: 75,
             valueAxisIndex: 3
         }
     ],

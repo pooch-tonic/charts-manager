@@ -45,7 +45,6 @@ export default {
         let categoryAxisToInsert = [];
         let valueAxisToInsert = [];
 
-        console.log(data)
         categories.forEach(category => {
             if (category.show) {
                 let categoryData = extractColumn(dataset.source, _.findIndex(dataset.dimensions, { name: category.dimension }))
@@ -99,6 +98,14 @@ export default {
 
                 if (chartSystem.name !== 'polar') {
                     entryToPush[valueAxis.base.name + 'Index'] = entry.valueAxisIndex;
+                } else {
+                    // enable options for pie charts only
+                    if (entry.type.type === 'pie') {
+                        if (entry.roseType !== 'none') {
+                            entryToPush['roseType'] = entry.roseType;
+                        }
+                        entryToPush['radius'] = [entry.innerRadius + '%', entry.outerRadius + '%']
+                    }
                 }
 
                 // enable options for line series only

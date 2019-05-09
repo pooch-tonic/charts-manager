@@ -2,19 +2,39 @@
     <BTabs>
         <BTab title="chart" active @click="cancelAllForms">
             <div id="chart-toolbar" class="tablist" role="tablist">
-                <BInputGroup prepend="sort (primary)">
+                <BInputGroup :prepend="storeSort.primary.data.dataType === 'dimension' ? 'sort (primary)' : 'sort'">
                     <BFormSelect
                     label="data" 
-                    v-model="storeSort.primary.dataName"
-                    :options="storeDimensions"
-                    />
+                    v-model="storeSort.primary.data"
+                    >
+                        <optgroup v-if="storeDimensions.length > 0" label="dimensions">
+                            <option
+                            v-for="(dimension, index) in storeDimensions"
+                            :key="index"
+                            :value="{dataType: 'dimension', dataName: dimension}"
+                            >
+                                {{ dimension }}
+                            </option>
+                        </optgroup>
+                        <optgroup v-if="storeData.stacks.length > 0" label="stacks">
+                            <option
+                            v-for="(stack, index) in storeData.stacks"
+                            :key="index"
+                            :value="{dataType: 'stack', dataName: stack.name}"
+                            >
+                                {{ stack.name }}
+                            </option>
+                        </optgroup>
+                    </BFormSelect>
                     <BFormSelect
                     label="type" 
                     v-model="storeSort.primary.type"
                     :options="getSortTypes()"
                     />
                 </BInputGroup>
-                <BInputGroup prepend="sort (secondary)" v-if="storeSort.primary.type !== null">
+                <BInputGroup 
+                prepend="sort (secondary)" 
+                v-if="storeSort.primary.data.dataType === 'dimension' && storeSort.primary.type !== null">
                     <BFormSelect
                     label="data" 
                     v-model="storeSort.secondary.dataName"
@@ -364,6 +384,41 @@
                                                     </BInputGroup>
                                                 </BCol>
                                             </BRow>
+                                            <BRow v-if="entry.type.type === 'pie'">
+                                                <BCol cols="12">
+                                                    <BInputGroup prepend="rose">
+                                                        <BFormSelect
+                                                        label="rose" 
+                                                        v-model="entry.roseType"
+                                                        :options="getSeriesOptions().roseType"
+                                                        />
+                                                    </BInputGroup>
+                                                </BCol>
+                                                <BCol cols="12">
+                                                    <BInputGroup prepend="radius (inner)">
+                                                        <BInput
+                                                        label="innerRadius"
+                                                        type="range"
+                                                        min="0"
+                                                        max="100"
+                                                        v-model="entry.innerRadius"
+                                                        :options="getSeriesOptions().roseType"
+                                                        />
+                                                    </BInputGroup>
+                                                </BCol>
+                                                <BCol cols="12">
+                                                    <BInputGroup prepend="radius (outer)">
+                                                        <BInput
+                                                        label="outerRadius"
+                                                        type="range"
+                                                        min="0"
+                                                        max="100"
+                                                        v-model="entry.outerRadius"
+                                                        :options="getSeriesOptions().roseType"
+                                                        />
+                                                    </BInputGroup>
+                                                </BCol>
+                                            </BRow>
                                             <BRow>
                                                 <BCol>
                                                     <BInputGroup prepend="stack">
@@ -432,7 +487,7 @@
                                                     </BInputGroup>
                                                 </BCol>
                                             </BRow>
-                                            <BRow v-if="storeChartSystem.name !== 'polar'">
+                                            <BRow>
                                                 <BCol>
                                                     <BInputGroup prepend="min">
                                                         <BInput v-model="entry.min" label="min"/>
@@ -1020,7 +1075,12 @@ export default {
     },
     watch: {
         selectedCategoryAxis: function(newSelectedCategoryAxis, oldSelectedCategoryAxis) {
-            console.log(newSelectedCategoryAxis, oldSelectedCategoryAxis)
+            let data = store.getters.getData();
+            data.categoryAxis = newSelectedCategoryAxis
+            data.valueAxis = oldSelectedCategoryAxis
+            let swapper = _.cloneDeep(data.currentAxis.primaryAxis.axisList)
+            data.currentAxis.primaryAxis.axisList = _.cloneDeep(data.currentAxis.secondaryAxis.axisList)
+            data.currentAxis.secondaryAxis.axisList = swapper
         }
     }
 }

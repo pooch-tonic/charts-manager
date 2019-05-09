@@ -1,5 +1,5 @@
 <template>
-    <div id="current-chart" @click="this.redraw">
+    <div id="current-chart">
     </div>
 </template>
 
@@ -51,7 +51,7 @@ export default {
             let st = vm.getSort();
             let data = _.cloneDeep(vm.getData());
             let options = merger.merge(cs.allowedParameters);
-            data.dataset = sorter.sort(data.dataset, st);
+            data.dataset = sorter.sort(data, st);
             options = dataMapper.mapData(options, data, cs);
             // DEBUG console.log("STORE: ", cc.chartType);
             // DEBUG console.log("MERGED: ",options);

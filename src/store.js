@@ -15,11 +15,17 @@ export default new Vuex.Store({
             sort: {
                 primary: {
                     type: null,
-                    dataName: 'name'
+                    data: {
+                        dataType: 'dimension', 
+                        dataName: defaultData.dataset.dimensions[1].name
+                    }
                 },
                 secondary: {
                     type: null,
-                    dataName: 'installed apps'
+                    data: {
+                        dataType: 'dimension', 
+                        dataName: defaultData.dataset.dimensions[1].name
+                    }
                 }
             }
         },
