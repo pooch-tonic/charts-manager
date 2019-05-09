@@ -1,0 +1,92 @@
+{
+    "coordinateSystem": "cartesian2d",
+    "categories": [
+        {
+            "name": "name",
+            "dimension": "name",
+            "categoryAxisIndex": 0,
+            "show": true
+        }
+    ],
+    "series": [
+        {
+            "name": "TV time (hrs)",
+            "type": "line",
+            "dimension": "TV time in hrs",
+            "min": 0,
+            "max": 15,
+            "show": true,
+            "smooth": 0,
+            "stack": "total screen time",
+            "step": "none",
+            "symbol": "rect",
+            "areaStyle": false,
+            "roseType": "none",
+            "innerRadius": 0,
+            "outerRadius": 75,
+            "valueAxisIndex": 0
+        },
+        {
+            "name": "smartphone time (hrs)",
+            "type": "line",
+            "dimension": "smartphone time in hrs",
+            "min": 0,
+            "max": 15,
+            "show": true,
+            "smooth": 0,
+            "stack": "total screen time",
+            "step": "none",
+            "symbol": "triangle",
+            "areaStyle": false,
+            "roseType": "none",
+            "innerRadius": 0,
+            "outerRadius": 75,
+            "valueAxisIndex": 1
+        }
+    ],
+    "stacks": [
+        {
+            "name": "total screen time",
+            "show": true
+        }
+    ],
+    "categoryAxis": "primaryAxis",
+    "valueAxis": "secondaryAxis",
+    "axis": {
+        "primaryAxis": {
+            "spacing": 80,
+            "axisList": [
+                {
+                    "axisIndex": 0,
+                    "name": "x1",
+                    "position": "bottom"
+                }
+            ]
+        },
+        "secondaryAxis": {
+            "spacing": 80,
+            "axisList": [
+                {
+                    "axisIndex": 0,
+                    "name": "y1",
+                    "position": "left"
+                },
+                {
+                    "axisIndex": 1,
+                    "name": "y2",
+                    "position": "left"
+                },
+                {
+                    "axisIndex": 2,
+                    "name": "y3",
+                    "position": "right"
+                },
+                {
+                    "axisIndex": 3,
+                    "name": "y4",
+                    "position": "right"
+                }
+            ]
+        }
+    }
+}

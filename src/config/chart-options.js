@@ -237,6 +237,19 @@ const chartTypes = {
             chartParameters.radiusAxis,
             chartParameters.tooltip
         ]
+    },
+    scatter: {
+        name: 'scatter',
+        type: 'scatter',
+        isPolar: false,
+        allowedParameters: [
+            chartParameters.title,
+            chartParameters.legend,
+            chartParameters.grid,
+            chartParameters.xAxis,
+            chartParameters.yAxis,
+            chartParameters.tooltip
+        ]
     }
 }
 
@@ -253,7 +266,8 @@ const chartSystemTypes = {
         ],
         allowedChartTypes: [
             chartTypes.line2d,
-            chartTypes.bar2d
+            chartTypes.bar2d,
+            chartTypes.scatter
         ],
         allowedAxisTypes: [
             axisTypes.x,
