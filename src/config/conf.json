@@ -1,5 +1,24 @@
 {
+    "bindings": [
+        { 
+            "name": "name",
+            "type": "category",
+            "axisIndex": 0
+        },
+        {
+            "name": "smartphone time in hrs",
+            "type": "value",
+            "axisIndex": 0
+        },
+        {
+            "name": "TV time in hrs",
+            "type": "value",
+            "axisIndex": 1
+        }
+    ],
     "coordinateSystem": "cartesian2d",
+    "categoryAxis": "primaryAxis",
+    "valueAxis": "secondaryAxis",
     "categories": [
         {
             "name": "name",
@@ -11,7 +30,103 @@
     "series": [
         {
             "name": "TV time (hrs)",
-            "type": "line",
+            "type": {
+                "name": "line (cartesian 2D)",
+                "type": "line",
+                "isPolar": false,
+                "allowedParameters": [
+                    {
+                        "name": "title",
+                        "displayName": "title",
+                        "content": {
+                            "text": {
+                                "value": "Installed apps",
+                                "type": "text"
+                            }
+                        }
+                    },
+                    {
+                        "name": "legend",
+                        "displayName": "legend",
+                        "content": {
+                            "align": {
+                                "value": "left",
+                                "type": "select",
+                                "options": [
+                                    {"value": "left", "text": "left"},
+                                    {"value": "center", "text": "center"},
+                                    {"value": "right", "text": "right"}
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "grid",
+                        "displayName": "grid",
+                        "content": {
+                            "top": {
+                                "value": 100,
+                                "type": "percentage"
+                            },
+                            "right": {
+                                "value": 50,
+                                "type": "percentage"
+                            },
+                            "left": {
+                                "value": 50,
+                                "type": "percentage"
+                            },
+                            "bottom": {
+                                "value": 50,
+                                "type": "percentage"
+                            }
+                        }
+                    },
+                    [{
+                        "name": "xAxis",
+                        "displayName": "x axis",
+                        "content": {
+                            "min": {
+                                "value": null,
+                                "type": "number"
+                            },
+                            "max": {
+                                "value": null,
+                                "type": "number"
+                            }
+                        }
+                    }],
+                    [{
+                        "name": "yAxis",
+                        "displayName": "y axis",
+                        "content": {
+                            "min": {
+                                "value": null,
+                                "type": "number"
+                            },
+                            "max": {
+                                "value": null,
+                                "type": "number"
+                            }
+                        }
+                    }],
+                    {
+                        "name": "tooltip",
+                        "displayName": "tooltip",
+                        "content": {
+                            "trigger": {
+                                "value": "axis",
+                                "type": "select",
+                                "options": [
+                                    {"value": "axis", "text": "axis"},
+                                    {"value": "item", "text": "item"},
+                                    {"value": "none", "text": "none"}
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
             "dimension": "TV time in hrs",
             "min": 0,
             "max": 15,
@@ -23,12 +138,107 @@
             "areaStyle": false,
             "roseType": "none",
             "innerRadius": 0,
-            "outerRadius": 75,
-            "valueAxisIndex": 0
+            "outerRadius": 75
         },
         {
             "name": "smartphone time (hrs)",
-            "type": "line",
+            "type": {
+                "name": "line (cartesian 2D)",
+                "type": "line",
+                "isPolar": false,
+                "allowedParameters": [
+                    {
+                        "name": "title",
+                        "displayName": "title",
+                        "content": {
+                            "text": {
+                                "value": "Installed apps",
+                                "type": "text"
+                            }
+                        }
+                    },
+                    {
+                        "name": "legend",
+                        "displayName": "legend",
+                        "content": {
+                            "align": {
+                                "value": "left",
+                                "type": "select",
+                                "options": [
+                                    {"value": "left", "text": "left"},
+                                    {"value": "center", "text": "center"},
+                                    {"value": "right", "text": "right"}
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "grid",
+                        "displayName": "grid",
+                        "content": {
+                            "top": {
+                                "value": 100,
+                                "type": "percentage"
+                            },
+                            "right": {
+                                "value": 50,
+                                "type": "percentage"
+                            },
+                            "left": {
+                                "value": 50,
+                                "type": "percentage"
+                            },
+                            "bottom": {
+                                "value": 50,
+                                "type": "percentage"
+                            }
+                        }
+                    },
+                    [{
+                        "name": "xAxis",
+                        "displayName": "x axis",
+                        "content": {
+                            "min": {
+                                "value": null,
+                                "type": "number"
+                            },
+                            "max": {
+                                "value": null,
+                                "type": "number"
+                            }
+                        }
+                    }],
+                    [{
+                        "name": "yAxis",
+                        "displayName": "y axis",
+                        "content": {
+                            "min": {
+                                "value": null,
+                                "type": "number"
+                            },
+                            "max": {
+                                "value": null,
+                                "type": "number"
+                            }
+                        }
+                    }],
+                    {
+                        "name": "tooltip",
+                        "displayName": "tooltip",
+                        "content": {
+                            "trigger": {
+                                "value": "axis",
+                                "type": "select",
+                                "options": [
+                                    {"value": "axis", "text": "axis"},
+                                    {"value": "item", "text": "item"},
+                                    {"value": "none", "text": "none"}
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
             "dimension": "smartphone time in hrs",
             "min": 0,
             "max": 15,
@@ -40,8 +250,7 @@
             "areaStyle": false,
             "roseType": "none",
             "innerRadius": 0,
-            "outerRadius": 75,
-            "valueAxisIndex": 1
+            "outerRadius": 75
         }
     ],
     "stacks": [
@@ -50,11 +259,17 @@
             "show": true
         }
     ],
-    "categoryAxis": "primaryAxis",
-    "valueAxis": "secondaryAxis",
     "axis": {
         "primaryAxis": {
             "spacing": 80,
+            "base": {
+                "name": "xAxis",
+                "displayName": "x axis",
+                "positions": [
+                    "bottom",
+                    "top"
+                ]
+            },
             "axisList": [
                 {
                     "axisIndex": 0,
@@ -65,6 +280,14 @@
         },
         "secondaryAxis": {
             "spacing": 80,
+            "base": {
+                "name": "yAxis",
+                "displayName": "y axis",
+                "positions": [
+                    "left",
+                    "right"
+                ]
+            },
             "axisList": [
                 {
                     "axisIndex": 0,
@@ -75,16 +298,6 @@
                     "axisIndex": 1,
                     "name": "y2",
                     "position": "left"
-                },
-                {
-                    "axisIndex": 2,
-                    "name": "y3",
-                    "position": "right"
-                },
-                {
-                    "axisIndex": 3,
-                    "name": "y4",
-                    "position": "right"
                 }
             ]
         }

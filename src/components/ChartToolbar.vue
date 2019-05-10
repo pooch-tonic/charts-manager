@@ -873,16 +873,101 @@
                 </BCard>
             </div>
         </BTab>
+        <BTab title="import/export" @click="cancelAllForms">
+            <div id="file-toolbar" class="tablist" role="tablist">
+                <BCard 
+                no-body
+                >
+                    <BCardHeader header-tag="header" role="tab">
+                        <BButton v-b-toggle="'import-accordion'" block variant="info">
+                            Import
+                        </BButton>
+                    </BCardHeader>
+                    <BCollapse id="import-accordion" accordion="importToolbarMenu">
+                        <BCardBody>
+                            <BContainer>
+                                <BRow>
+                                    <BCol cols="9">
+                                        <BFormFile 
+                                        v-model="dataImport"
+                                        ref="data-import"
+                                        placeholder="Data JSON"
+                                        />
+                                    </BCol>
+                                    <BCol cols="3">
+                                        <BButton @click="handleDataImportCancel">
+                                            Reset
+                                        </BButton>
+                                    </BCol>
+                                </BRow>
+                                <BRow>
+                                    <BCol cols="9">
+                                        <BFormFile 
+                                        v-model="confImport"
+                                        ref="conf-import"
+                                        placeholder="Conf JSON"
+                                        />
+                                    </BCol>
+                                    <BCol cols="3">
+                                        <BButton @click="handleConfImportCancel">
+                                            Reset
+                                        </BButton>
+                                    </BCol>
+                                </BRow>
+                                <BRow>
+                                    <BCol>
+                                        <br/>
+                                        <BButton @click="handleImportSubmit">
+                                            Submit
+                                        </BButton>
+                                    </BCol>
+                                </BRow>
+                            </BContainer>
+                        </BCardBody>
+                    </BCollapse>
+                </BCard>
+                <BCard 
+                no-body
+                >
+                    <BCardHeader header-tag="header" role="tab">
+                        <BButton v-b-toggle="'export-accordion'" block variant="info">
+                            Export
+                        </BButton>
+                    </BCardHeader>
+                    <BCollapse id="export-accordion" accordion="exportToolbarMenu">
+                        <BCardBody>
+                            <BContainer>
+                                <BRow>
+                                    <BCol>
+                                        <BButton @click="">
+                                            Data JSON
+                                        </BButton>
+                                    </BCol>
+                                    <BCol>
+                                        <BButton @click="">
+                                            Conf JSON
+                                        </BButton>
+                                    </BCol>
+                                </BRow>
+                            </BContainer>
+                        </BCardBody>
+                    </BCollapse>
+                </BCard>
+            </div>
+        </BTab>
     </BTabs>
 </template>
 
 <script>
-import { BContainer, BRow, BCol, BTabs, BTab, BForm, BFormCheckbox, BFormCheckboxGroup, BButton, BButtonGroup, BButtonToolbar, BInput, BInputGroup, BCard, BCardHeader, BCardBody, BCardFooter, BCardText, BCollapse, BFormSelect } from 'bootstrap-vue'
+import { BContainer, BRow, BCol, BTabs, BTab, BForm, BFormCheckbox, BFormCheckboxGroup, BFormFile, BButton, BButtonGroup, BButtonToolbar, BInput, BInputGroup, BCard, BCardHeader, BCardBody, BCardFooter, BCardText, BCollapse, BFormSelect } from 'bootstrap-vue'
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { chartSystemTypes, chartTypes, chartParameters, sortTypes, axisTypes, dimensionTypes, seriesOptions } from '@/config/chart-options';
 import { toType } from '@/util/type-checker';
 import lodash from 'lodash';
 import store from '@/store';
+import dataFile from '@/config/data'
+import confFile from '@/config/conf'
+import { importChart } from '@/util/chart-importer'
 
 export default {
     name: 'ChartToolbar',
@@ -892,7 +977,9 @@ export default {
             createEntryForm: null,
             createAxisForm: null,
             createStackForm: null,
-            selectedCategoryAxis: 'primaryAxis'
+            selectedCategoryAxis: 'primaryAxis',
+            dataImport: null,
+            confImport: null
         }  
     },
     components: {
@@ -913,6 +1000,7 @@ export default {
         'b-form': BForm,
         'b-form-checkbox': BFormCheckbox,
         'b-form-checkbox-group': BFormCheckboxGroup,
+        'b-form-file': BFormFile,
         'b-form-select': BFormSelect,
         'b-tab': BTab,
         'b-tabs': BTabs  
@@ -994,6 +1082,21 @@ export default {
             this.handleCategoryCreationCancel();
             this.handleEntryCreationCancel();
             this.handleAxisCreationCancel();
+            this.handleDataImportCancel();
+            this.handleConfImportCancel();
+        },
+        handleDataImportCancel() {
+            this.$refs['data-import'].reset()
+        },
+        handleConfImportCancel() {
+            this.$refs['conf-import'].reset()
+        },
+        handleImportSubmit() {
+            let dataReader = new FileReader()
+            let confReader = new FileReader()
+            let convertedDataImport = dataReader.readAsText(this.dataImport)
+            let convertedConfImport = confReader.readAsText(this.confImport)
+            importChart(store.getters.getData(), store.getters.getChartSystem(), this.convertedDataImport, this.convertedConfImport)
         },
         handleStackCreationStart() {
             this.createStackForm = {

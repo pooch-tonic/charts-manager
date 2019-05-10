@@ -297,12 +297,8 @@ const chartSystemTypes = {
 }
 
 const dimensionTypes = {
-    category: {
-        name: 'category'
-    },
-    value: {
-        name: 'value'
-    }
+    category: 'category',
+    value: 'value'
 }
 
 const seriesOptions = {

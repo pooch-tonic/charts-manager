@@ -160,7 +160,7 @@ export default {
         options[categoryAxis.base.name] = categoryAxisToInsert;
         options[valueAxis.base.name] = valueAxisToInsert;
         options.series = seriesToInsert;
-        console.log('OPTIONS-ALT', options);
+        //console.log('OPTIONS-ALT', options);
         return options;
     }
 }
